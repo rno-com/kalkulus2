@@ -729,7 +729,7 @@ def({
     left.append(H('Kalkulus 2 · TIN613022 · Pertemuan 2', 'eyebrow'));
     left.append(E('h1', { html: 'Aplikasi Integral <span>Luas Daerah</span>' }));
     left.append(E('p', { class: 'lead', html: 'Program Studi Teknik Industri · Universitas Insan Cita Indonesia' }));
-    left.append(H('<b>Rizky Novera H, S.Si., M.T.</b><span>Dosen pengampu · materi sumber: slide Pertemuan 2</span>', 'who'));
+    left.append(H('<b>Rizky Novera H, S.Si., M.T.</b><span>Dosen pengampu </span>', 'who'));
     left.append(H(`<h3 style="margin-bottom:6px">Tujuan pembelajaran</h3><ol class="obj"><li>Mampu menentukan luas daerah di atas sumbu koordinat.</li><li>Mampu menentukan luas daerah di bawah sumbu koordinat.</li><li>Mampu menentukan luas daerah di antara dua kurva.</li></ol>`));
     left.append(E('div', { class: 'row' },
       E('button', { class: 'btn primary', type: 'button', onclick: () => App.go(1) }, 'MULAI →'),
@@ -750,7 +750,7 @@ def({
 def({
   sec: 'Konsep luas', title: 'Mengapa integral dapat menghitung luas?', build(r) {
     const F = frame(r, {
-      eyebrow: eb(2, 'Konsep luas', badge('pdf', 'Kurva: Daerah I, Contoh Soal 2 · hal. 10')),
+      eyebrow: eb(2, 'Konsep luas'),
       title: 'Mengapa integral dapat menghitung luas?',
       lead: 'Daerah di bawah kurva tidak berbentuk persegi panjang. Kita potong menjadi banyak persegi panjang kecil, jumlahkan luasnya, lalu ambil limitnya.',
       cap: `Daerah di bawah ${m`y=x^2`}, di atas sumbu-x, pada ${m`0\le x\le 1`}.`, bar: true
@@ -795,7 +795,7 @@ def({
 def({
   sec: 'Konsep luas', title: 'Luas di atas dan di bawah sumbu-x', build(r) {
     const F = frame(r, {
-      eyebrow: eb(3, 'Luas terhadap sumbu-x', badge('pdf', 'Materi hal. 3–4')),
+      eyebrow: eb(3, 'Luas terhadap sumbu-x'),
       title: 'Luas daerah di atas dan di bawah sumbu-x',
       lead: 'Integral tentu bisa bernilai negatif, sedangkan luas selalu positif. Tanda fungsi menentukan cara menghitung luas.', bar: true,
       cap: `Kurva ${m`y=x^2-1`}. Pilih kasus di atas grafik.`
@@ -852,7 +852,7 @@ function graphX2m1(host) {
 def({
   sec: 'Konsep luas', title: 'Contoh: y = x² − 1 pada [−2, 2]', build(r) {
     const F = frame(r, {
-      eyebrow: eb(4, 'Contoh luas terhadap sumbu', badge('pdf', 'Contoh · hal. 4')),
+      eyebrow: eb(4, 'Contoh luas terhadap sumbu'),
       title: `Contoh: ${m`y=x^2-1`}, garis ${m`x=-2`}, ${m`x=2`}, dan sumbu-x`,
       lead: 'Tentukan luas daerah yang dibatasi oleh kurva, kedua garis, dan sumbu-x. Materi memberi catatan: gambar terlebih dahulu daerah yang dimaksud.',
       cap: 'Klik salah satu daerah L1, L2, atau L3 untuk menuju pertanyaannya.'
@@ -905,7 +905,7 @@ def({
 def({
   sec: 'Konsep luas', title: 'Penyelesaian ∫|x² − 1| dx', build(r) {
     const F = frame(r, {
-      eyebrow: eb(5, 'Penyelesaian', badge('pdf', 'Jawab · hal. 5')),
+      eyebrow: eb(5, 'Penyelesaian'),
       title: `Penyelesaian ${m`\int_{-2}^{2}|x^2-1|\,dx`}`,
       lead: 'Setiap subregion dihitung dengan fungsi yang bernilai positif di bagian itu, lalu hasilnya dijumlahkan.',
       cap: 'Amber: di atas sumbu-x. Cyan: di bawah sumbu-x.'
@@ -934,7 +934,7 @@ def({
 def({
   sec: 'Irisan vertikal (dx)', title: 'Luas daerah di antara dua kurva', build(r) {
     const F = frame(r, {
-      eyebrow: eb(6, 'Irisan vertikal', badge('pdf', 'Materi hal. 6–7')),
+      eyebrow: eb(6, 'Irisan vertikal'),
       title: 'Luas daerah di antara dua kurva',
       lead: `Irisan vertikal selebar ${m`\Delta x`} dipotong dari kurva bawah ke kurva atas. Tingginya selalu ${m`f(x)-g(x)`}, termasuk ketika ${m`g(x)`} negatif.`,
       cap: 'Geser posisi irisan dengan slider di panel.'
@@ -1017,7 +1017,7 @@ def({
 def({
   sec: 'Irisan vertikal (dx)', title: 'Menentukan titik potong', build(r) {
     const F = frame(r, {
-      eyebrow: eb(8, 'Titik potong', badge('pdf', 'Contoh Soal 1 · hal. 8')),
+      eyebrow: eb(8, 'Titik potong'),
       title: 'Menentukan titik potong',
       lead: 'Dua kurva berpotongan ketika nilai y-nya sama. Absis titik potong menjadi batas integrasi.',
       cap: 'Tekan PUTAR. Dua titik bergerak di kedua kurva; jarak vertikalnya menjadi nol di titik potong.', bar: true
@@ -1076,7 +1076,7 @@ function graphEx1(host, neutral) {
 def({
   sec: 'Irisan vertikal (dx)', title: 'Contoh 1: y = x dan y = x²', build(r) {
     const F = frame(r, {
-      eyebrow: eb(9, 'Contoh soal', badge('pdf', 'Contoh Soal 1 · hal. 8')),
+      eyebrow: eb(9, 'Contoh soal'),
       title: `Contoh 1: ${m`y=x`} dan ${m`y=x^2`}`,
       lead: `Tentukan luas daerah <i>tertutup</i> yang dibatasi oleh kurva ${m`y=x`} dan ${m`y=x^2`}.`,
       cap: 'Grafik diperbarui pada setiap langkah yang Anda buka.'
@@ -1189,7 +1189,7 @@ def({
 def({
   sec: 'Irisan vertikal (dx)', title: 'Contoh 3: y = x² dan y = 2x − x²', build(r) {
     const F = frame(r, {
-      eyebrow: eb(12, 'Contoh soal · coba dulu', badge('pdf', 'Contoh Soal 3 · hal. 15')),
+      eyebrow: eb(12, 'Contoh soal · coba dulu'),
       title: `Contoh 3: ${m`y=x^2`} dan ${m`y=2x-x^2`}`,
       lead: 'Hitung luas daerah yang dibatasi oleh kedua parabola. Kerjakan setiap tahap sendiri; penyelesaian materi terbuka setelah Anda menjawab.', bar: true,
       cap: 'Kedua kurva netral sampai Anda menentukan kurva atas.'
@@ -1250,7 +1250,7 @@ function graphEx2(host, o = {}) {
 def({
   sec: 'Pembagian region', title: 'Satu integral atau beberapa integral?', build(r) {
     const F = frame(r, {
-      eyebrow: eb(13, 'Pembagian region', badge('pdf', 'Contoh Soal 2 · hal. 9')),
+      eyebrow: eb(13, 'Pembagian region'),
       title: 'Satu integral atau beberapa integral?',
       lead: `Hitung luas daerah yang dibatasi oleh sumbu x, ${m`y=x^2`}, dan ${m`y=-x+2`}. Sebelum menghitung, periksa apakah satu pasangan batas atas–bawah berlaku di seluruh interval.`,
       cap: 'Geser irisan vertikal dari kiri ke kanan dan perhatikan label batas atasnya.'
@@ -1293,7 +1293,7 @@ def({
 def({
   sec: 'Pembagian region', title: 'Region dibagi menjadi dua subregion', build(r) {
     const F = frame(r, {
-      eyebrow: eb(14, 'Pembagian region', badge('pdf', 'Contoh Soal 2 · hal. 9–10')),
+      eyebrow: eb(14, 'Pembagian region'),
       title: 'Region dibagi menjadi dua subregion',
       lead: `Dengan irisan persegi panjang vertikal, daerah dibagi di ${m`x=1`}. Setiap subregion punya satu batas atas sendiri, dan luasnya dijumlahkan.`,
       cap: 'Daerah I (abu-abu) dan Daerah II (cyan), seperti pada materi.'
@@ -1367,7 +1367,7 @@ def({
 def({
   sec: 'Irisan horizontal (dy)', title: 'Luas dengan irisan horizontal', build(r) {
     const F = frame(r, {
-      eyebrow: eb(16, 'Irisan horizontal', badge('pdf', 'Materi hal. 11')),
+      eyebrow: eb(16, 'Irisan horizontal'),
       title: 'Luas dengan irisan horizontal',
       lead: `Irisan horizontal setebal ${m`\Delta y`} membentang dari kurva kiri ke kurva kanan. Panjangnya ${m`x_R-x_L`}.`,
       cap: 'Luas Daerah D = ? Geser irisan dengan slider di panel.'
@@ -1411,7 +1411,7 @@ def({
 def({
   sec: 'Irisan horizontal (dy)', title: 'Membentuk x = f(y)', build(r) {
     const F = frame(r, {
-      eyebrow: eb(17, 'Irisan horizontal', badge('pdf', 'Contoh Soal 1 (dy) · hal. 12')),
+      eyebrow: eb(17, 'Irisan horizontal'),
       title: `Membentuk ${m`x=f(y)`}`,
       lead: `Irisan horizontal berada pada ketinggian ${m`y`} tertentu. Untuk mengetahui ujung kiri dan kanannya, setiap kurva harus ditulis sebagai ${m`x`} dalam ${m`y`}.`,
       cap: `Contoh: daerah di bawah ${m`y=x^2`} dan ${m`y=-x+2`}, di atas sumbu x.`
@@ -1444,7 +1444,7 @@ def({
 def({
   sec: 'Irisan horizontal (dy)', title: 'Contoh dy: luas = 5/6', build(r) {
     const F = frame(r, {
-      eyebrow: eb(18, 'Irisan horizontal', badge('pdf', 'Contoh Soal 1 (dy) · hal. 12')),
+      eyebrow: eb(18, 'Irisan horizontal'),
       title: `Contoh dengan dy: luasnya ${m`\tfrac56`}`,
       lead: `Hitung luas daerah yang dibatasi oleh sumbu x, ${m`y=x^2`}, dan ${m`y=-x+2`} dengan irisan horizontal.`,
       cap: 'Garis merah putus-putus: batas c = 0 dan d = 1.'
@@ -1504,7 +1504,7 @@ function graphEx4(host) {
 def({
   sec: 'Irisan horizontal (dy)', title: 'Contoh lanjutan: y = x − 1 dan y² = 2x + 6', build(r) {
     const F = frame(r, {
-      eyebrow: eb(19, 'Contoh lanjutan', badge('pdf', 'Contoh Soal 2 (dy) · hal. 13')),
+      eyebrow: eb(19, 'Contoh lanjutan'),
       title: `Contoh lanjutan: ${m`y=x-1`} dan ${m`y^2=2x+6`}`,
       lead: `Hitung luas daerah yang dibatasi oleh garis ${m`y=x-1`} dan parabola ${m`y^2=2x+6`}. Sebelum menghitung, putuskan arah irisannya.`, bar: true,
       cap: 'Gunakan tombol pratinjau untuk melihat bentuk irisan pada kedua arah.'
@@ -1536,7 +1536,7 @@ def({
 def({
   sec: 'Irisan horizontal (dy)', title: 'Mengubah persamaan menjadi x = f(y)', build(r) {
     const F = frame(r, {
-      eyebrow: eb(20, 'Contoh lanjutan', badge('pdf', 'Contoh Soal 2 (dy) · hal. 13')),
+      eyebrow: eb(20, 'Contoh lanjutan'),
       title: `Mengubah persamaan menjadi ${m`x=f(y)`} dan mencari titik potong`,
       lead: 'Tulis kedua kurva sebagai fungsi y, tentukan mana yang kiri dan kanan, lalu samakan untuk mencari titik potong.'
     });
@@ -1564,7 +1564,7 @@ def({
 def({
   sec: 'Irisan horizontal (dy)', title: 'Membentuk integral dengan dy', build(r) {
     const F = frame(r, {
-      eyebrow: eb(21, 'Contoh lanjutan', badge('pdf', 'Contoh Soal 2 (dy) · hal. 14')),
+      eyebrow: eb(21, 'Contoh lanjutan'),
       title: 'Membentuk integral dengan dy',
       lead: 'Klik setiap bagian integral untuk melihat asalnya pada grafik, lalu buka perhitungannya.'
     });
@@ -1600,7 +1600,7 @@ def({
       { head: 'Antiturunan', html: dm`=-\frac12\Big(\frac{y^3}{3}\Big)+\frac{y^2}{2}+4y\,\Bigg]_{-2}^{4}` },
       { head: 'Hasil', html: `${dm`=-\tfrac16(64)+8+16-\big(\tfrac43+2-8\big)=18`}<p>Luas daerah = <b>18</b> satuan luas.</p>`, on: () => { g.text(1.2, 1.9, 'A = 18', { layer: 'labels', anchor: 'middle', cls: 'big ui' }); } }
     ], { key: 'dy18' });
-    blk(P, `<details class="more"><summary>${badge('cmp', 'Pembanding · bukan dari materi')} Bagaimana jika memakai dx?</summary><div>
+    blk(P, `<details class="more"><summary> Bagaimana jika memakai dx?</summary><div>
       ${dm`\begin{aligned}A&=\int_{-3}^{-1}2\sqrt{2x+6}\,dx\\&\quad+\int_{-1}^{5}\Big[\sqrt{2x+6}-(x-1)\Big]\,dx\end{aligned}`}${dm`=\frac{16}{3}+\frac{38}{3}=18`}
       <p class="small">Hasilnya sama, tetapi perlu dua integral dengan bentuk akar. Karena itu materi memilih dy.</p></div></details>`);
   }
@@ -1888,7 +1888,7 @@ def({
     r.append(E('div', { class: 's-head' },
       E('div', { class: 'eyebrow', html: eb(26, 'Penutup') }),
       E('h2', {}, 'Quiz & rangkuman: dari kurva menjadi luas'),
-      E('p', { class: 'lead', html: 'Sepuluh soal dengan umpan balik, lalu ringkasan formula dan hasil setiap contoh.' })));
+      E('p', { class: 'lead' })));
     const tabs = E('div', { style: 'margin-bottom:16px' }); r.append(tabs);
     const box = E('div'); r.append(box);
     const Q = [

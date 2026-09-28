@@ -1,0 +1,2051 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Luas Daerah Interaktif</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Source+Serif+4:ital,wght@0,500;0,600;1,400;1,500&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']] },
+  svg: { fontCache: 'global' },
+  options: { enableMenu: false },
+  startup: {
+    typeset: false,
+    ready() {
+      MathJax.startup.defaultReady();
+      MathJax.startup.promise.then(function () { window.__mjReady = true; if (window.__onMJ) window.__onMJ(); });
+    }
+  }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg-full.js" async></script>
+<style>
+:root{
+  --bg:#F3F6F5; --surface:#FFFFFF; --surface-2:#EAF1EF; --surface-3:#F7FAF9;
+  --ink:#10201C; --ink-2:#40524D; --ink-3:#6A7B77; --line:#D3DDDA; --line-2:#E4EBE9;
+  --accent:#2F7D6E; --accent-2:#5FA396; --accent-soft:#DCEEE9; --accent-ink:#1D5A4F;
+  --c1:#2563EB; --c2:#DB2777; --cn:#374151;
+  --area:#F59E0B; --area-op:.26; --reg2:#06B6D4; --reg2-op:.30; --regG:#9CA3AF; --regG-op:.38;
+  --slice:#0F766E; --slice-op:.30; --pt:#111827;
+  --ok:#15803D; --ok-bg:#E7F5EC; --bad:#B91C1C; --bad-bg:#FBEBEB; --info:#1D4ED8; --info-bg:#EAF0FD;
+  --warn:#8A4B06; --warn-bg:#FDF3DC;
+  --font:'Source Sans 3','Segoe UI',system-ui,-apple-system,sans-serif;
+  --serif:'Source Serif 4',Cambria,'Times New Roman',serif;
+  --mono:'IBM Plex Mono',ui-monospace,'SFMono-Regular',Menlo,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#0D1412; --surface:#131C1A; --surface-2:#1A2724; --surface-3:#16211F;
+    --ink:#E4EDEA; --ink-2:#B1C1BC; --ink-3:#879894; --line:#2A3834; --line-2:#22302C;
+    --accent:#5FB3A2; --accent-2:#5FA396; --accent-soft:#1B342E; --accent-ink:#8FD6C6;
+    --c1:#6FA8FF; --c2:#F472B6; --cn:#CBD5E1;
+    --area:#FBBF24; --area-op:.24; --reg2:#22D3EE; --reg2-op:.26; --regG:#94A3B8; --regG-op:.30;
+    --slice:#2DD4BF; --slice-op:.28; --pt:#F3F4F6;
+    --ok:#4ADE80; --ok-bg:#11261A; --bad:#F87171; --bad-bg:#2B1515; --info:#93B4FF; --info-bg:#172036;
+    --warn:#FCD34D; --warn-bg:#2A2210;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#0D1412; --surface:#131C1A; --surface-2:#1A2724; --surface-3:#16211F;
+  --ink:#E4EDEA; --ink-2:#B1C1BC; --ink-3:#879894; --line:#2A3834; --line-2:#22302C;
+  --accent:#5FB3A2; --accent-2:#5FA396; --accent-soft:#1B342E; --accent-ink:#8FD6C6;
+  --c1:#6FA8FF; --c2:#F472B6; --cn:#CBD5E1;
+  --area:#FBBF24; --area-op:.24; --reg2:#22D3EE; --reg2-op:.26; --regG:#94A3B8; --regG-op:.30;
+  --slice:#2DD4BF; --slice-op:.28; --pt:#F3F4F6;
+  --ok:#4ADE80; --ok-bg:#11261A; --bad:#F87171; --bad-bg:#2B1515; --info:#93B4FF; --info-bg:#172036;
+  --warn:#FCD34D; --warn-bg:#2A2210;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{height:100%;box-sizing:border-box}
+body{height:100%;margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2.5px solid var(--accent);outline-offset:2px;border-radius:4px}
+
+/* ---------- shell ---------- */
+.app{height:100%;display:flex;flex-direction:column}
+.topbar{display:flex;align-items:center;gap:12px;padding:10px 20px;background:var(--surface);border-bottom:1px solid var(--line)}
+.brand{display:flex;flex-direction:column;min-width:0;flex:1}
+.brand b{font-weight:700;font-size:15px;letter-spacing:.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brand span{font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:var(--ink-3);text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.progress{height:4px;background:var(--line-2)}
+.progress i{display:block;height:100%;width:0;background:var(--accent-2);transition:width .35s ease}
+main{flex:1;overflow:auto;overflow-x:hidden;scroll-behavior:smooth}
+.navbar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 20px;padding-bottom:calc(10px + env(safe-area-inset-bottom,0px));background:var(--surface);border-top:1px solid var(--line)}
+.counter{font-family:var(--mono);font-size:13px;letter-spacing:.06em;color:var(--ink-2);text-align:center;display:flex;flex-direction:column;align-items:center;line-height:1.3}
+.counter small{font-family:var(--font);letter-spacing:0;color:var(--ink-3);font-size:12px}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:8px 14px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font-weight:600;font-size:14px;letter-spacing:.02em;cursor:pointer;transition:background .15s,border-color .15s,color .15s;min-height:38px}
+.btn:hover:not(:disabled){border-color:var(--accent);color:var(--accent-ink)}
+.btn:disabled{opacity:.42;cursor:not-allowed}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.primary:hover:not(:disabled){background:var(--accent-ink);border-color:var(--accent-ink);color:#fff}
+:root[data-theme="dark"] .btn.primary{color:#0D1412}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .btn.primary{color:#0D1412}}
+.btn.sm{padding:5px 10px;font-size:12.5px;min-height:32px;letter-spacing:.04em}
+.btn.ghost{border-color:transparent;background:transparent}
+.btn.nav{min-width:118px;font-family:var(--mono);font-size:13px;letter-spacing:.06em}
+
+/* ---------- slide ---------- */
+.slide{max-width:1320px;margin:0 auto;padding-block:22px 40px;padding-inline:24px;animation:fadeIn .28s ease}
+@keyframes fadeIn{from{opacity:.4;transform:translateY(4px)}to{opacity:1;transform:none}}
+.s-head{display:flex;flex-direction:column;gap:6px;margin-bottom:18px;max-width:900px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent-ink);display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+h1,h2,h3{text-wrap:balance;margin:0;line-height:1.18}
+h2{font-size:clamp(24px,2.6vw,32px);font-weight:700;letter-spacing:-.01em}
+h3{font-size:17px;font-weight:700}
+.lead{color:var(--ink-2);font-size:17px;margin:0;max-width:72ch}
+.grid{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);gap:26px;align-items:start}
+.grid.even{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+@media (max-width:920px){.grid,.grid.even{grid-template-columns:minmax(0,1fr)}}
+.fig{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:10px 10px 6px;position:sticky;top:12px}
+@media (max-width:920px){.fig{position:static}}
+.fig-bar{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;padding:2px 6px 6px;font-size:13px;color:var(--ink-2)}
+.fig-cap{font-size:13.5px;color:var(--ink-3);padding:4px 8px 6px;margin:0}
+.panel{display:flex;flex-direction:column;gap:16px;min-width:0}
+.block{display:flex;flex-direction:column;gap:8px}
+.block > p{margin:0}
+.muted{color:var(--ink-2)}
+.small{font-size:14px}
+p{margin:0}
+.src{font-size:15.5px;color:var(--ink-2);border-left:2px solid var(--line);padding-left:12px}
+
+.badge{display:inline-flex;align-items:center;gap:5px;font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:3px 7px;border-radius:4px;border:1px solid currentColor;line-height:1.2;white-space:nowrap}
+.badge.pdf{color:var(--accent-ink);background:var(--accent-soft);border-color:transparent}
+.badge.extra{color:var(--info);background:var(--info-bg);border-color:transparent}
+.badge.fix{color:var(--warn);background:var(--warn-bg);border-color:transparent}
+.badge.cmp{color:var(--ink-2);background:var(--surface-2);border-color:transparent}
+
+.plate{background:var(--surface-2);border-radius:var(--r);padding:14px 16px;overflow-x:auto;font-size:18px}
+.plate.big{font-size:21px}
+.plate .lbl{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3);margin-bottom:4px}
+.formula{font-size:19px;overflow-x:auto;overflow-y:hidden;padding:2px 0}
+mjx-container{max-width:100%}
+.note,.fb,.hint,.q,.plate,.block{min-width:0;overflow-wrap:anywhere}
+.note,.fb,.hint{overflow-x:auto}
+mjx-container[display="true"]{margin:.4em 0 !important;overflow-x:auto;overflow-y:hidden}
+
+/* readouts */
+.readout{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));background:var(--surface);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.readout div{padding:8px 12px;display:flex;flex-direction:column;gap:2px;box-shadow:inset -1px -1px 0 var(--line-2)}
+.readout span{font-family:var(--mono);font-size:11.5px;letter-spacing:.03em;color:var(--ink-3)}
+.readout b{font-variant-numeric:tabular-nums;font-size:18px;font-weight:600}
+.k1{color:var(--c1)} .k2{color:var(--c2)} .kA{color:var(--area)} .kS{color:var(--slice)} .kR{color:var(--reg2)}
+
+/* controls */
+.slider{display:flex;flex-direction:column;gap:4px}
+.slider-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-size:14px;color:var(--ink-2)}
+.slider-top output{font-family:var(--mono);font-size:14px;color:var(--ink);font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:var(--accent);height:28px}
+.seg{display:inline-flex;flex-wrap:wrap;border:1px solid var(--line);border-radius:9px;padding:3px;gap:3px;background:var(--surface-3)}
+.seg-b{border:0;background:transparent;padding:7px 12px;border-radius:7px;font-weight:600;font-size:14px;cursor:pointer;color:var(--ink-2);min-height:36px}
+.seg-b[aria-pressed="true"]{background:var(--surface);color:var(--accent-ink);box-shadow:0 0 0 1px var(--accent) inset}
+.chk{display:inline-flex;gap:6px;align-items:center;cursor:pointer;user-select:none}
+.chk input{accent-color:var(--accent);width:16px;height:16px}
+select{padding:7px 10px;border-radius:8px;border:1px solid var(--line);background:var(--surface);min-height:38px;font-weight:600}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.field{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--ink-2)}
+.field-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+
+/* questions */
+.q{display:flex;flex-direction:column;gap:10px;border:1px solid var(--line);border-radius:var(--r);padding:14px;background:var(--surface)}
+.q-text{font-weight:600;font-size:16.5px}
+.q-tag{font-family:var(--mono);font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3)}
+.opts{display:flex;flex-direction:column;gap:7px}
+.opts.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}
+.opt{display:flex;gap:10px;align-items:center;text-align:left;padding:9px 12px;border-radius:8px;border:1px solid var(--line);background:var(--surface-3);cursor:pointer;font-size:15.5px;min-height:44px;transition:border-color .15s,background .15s}
+.opt:hover:not(:disabled){border-color:var(--accent)}
+.opt:disabled{cursor:default}
+.opt-k{font-family:var(--mono);font-weight:600;font-size:12px;width:24px;height:24px;border-radius:6px;display:inline-grid;place-items:center;background:var(--surface);border:1px solid var(--line);flex:none}
+.opt.is-right{border-color:var(--ok);background:var(--ok-bg)}
+.opt.is-right .opt-k{background:var(--ok);color:var(--surface);border-color:var(--ok)}
+.opt.is-wrong{border-color:var(--bad);background:var(--bad-bg)}
+.opt.is-wrong .opt-k{background:var(--bad);color:var(--surface);border-color:var(--bad)}
+.fb{border-radius:8px;padding:10px 12px;font-size:15px}
+.fb strong{font-family:var(--mono);font-size:12.5px;letter-spacing:.07em;margin-right:4px}
+.fb.ok{background:var(--ok-bg);color:var(--ink)} .fb.ok strong{color:var(--ok)}
+.fb.bad{background:var(--bad-bg);color:var(--ink)} .fb.bad strong{color:var(--bad)}
+.fb.info{background:var(--info-bg);color:var(--ink)} .fb.info strong{color:var(--info)}
+.q-tools{display:flex;flex-wrap:wrap;gap:6px}
+.hint{background:var(--warn-bg);border-radius:8px;padding:10px 12px;font-size:15px}
+.hint strong{color:var(--warn)}
+.num-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.num-row input{width:130px;padding:8px 10px;border-radius:8px;border:1px solid var(--line);background:var(--surface-3);font-family:var(--mono);font-size:15px;min-height:40px}
+.num-row input.ok{border-color:var(--ok)} .num-row input.bad{border-color:var(--bad)}
+
+/* stepper */
+.stepper{display:flex;flex-direction:column;gap:10px}
+.step-btns{display:flex;flex-wrap:wrap;gap:6px}
+.step-btn .n{font-family:var(--mono);font-size:11px;width:20px;height:20px;border-radius:50%;display:inline-grid;place-items:center;background:var(--surface-2);color:var(--ink-2)}
+.step-btn.done{border-color:var(--accent);color:var(--accent-ink)}
+.step-btn.done .n{background:var(--accent);color:var(--surface)}
+.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;counter-reset:st}
+.step{counter-increment:st;display:grid;grid-template-columns:28px minmax(0,1fr);gap:10px;align-items:start;padding:10px 12px;border-radius:8px;background:var(--surface-3);border:1px solid var(--line-2);animation:fadeIn .3s ease}
+.step::before{content:counter(st);font-family:var(--mono);font-size:12px;font-weight:600;width:24px;height:24px;border-radius:6px;display:grid;place-items:center;background:var(--accent-soft);color:var(--accent-ink);margin-top:2px}
+.step > div{min-width:0;overflow-x:auto;font-size:16.5px}
+.step mjx-container[display="true"]{font-size:94%}
+.step .st-h{font-weight:700;font-size:14px;color:var(--ink-2);margin-bottom:2px;display:block}
+
+/* flows */
+.flow{display:flex;flex-wrap:wrap;gap:6px;align-items:center;list-style:none;margin:0;padding:0}
+.flow li{font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;padding:5px 9px;border-radius:6px;background:var(--surface-2);color:var(--ink-2)}
+.flow li + li::before{content:"→";margin-right:8px;color:var(--ink-3)}
+.flow li.on{background:var(--accent-soft);color:var(--accent-ink)}
+.vflow{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:0}
+.vflow li{display:grid;grid-template-columns:22px minmax(0,1fr);gap:10px;padding:6px 0;position:relative;font-size:15.5px}
+.vflow li::before{content:"";width:10px;height:10px;border-radius:50%;border:2px solid var(--accent);background:var(--surface);margin:6px 0 0 5px;z-index:1}
+.vflow li:not(:last-child)::after{content:"";position:absolute;left:10px;top:20px;bottom:-8px;width:2px;background:var(--line)}
+.vflow li.on::before{background:var(--accent)}
+
+.note{border:1px dashed var(--line);border-radius:var(--r);padding:12px 14px;font-size:15px;display:flex;flex-direction:column;gap:6px}
+.note.fix{border:1px solid var(--warn);background:var(--warn-bg)}
+.note.cmp{background:var(--surface-3)}
+.callout{display:flex;gap:12px;align-items:stretch}
+.iti{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.iti div{border:1px solid var(--line);border-radius:8px;padding:10px;background:var(--surface);display:flex;flex-direction:column;gap:4px;font-size:14px;color:var(--ink-2)}
+.iti b{font-family:var(--mono);letter-spacing:.08em;font-size:13px;color:var(--accent-ink)}
+@media (max-width:520px){.iti{grid-template-columns:1fr}}
+
+details.more{border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
+details.more summary{cursor:pointer;padding:10px 14px;font-weight:600;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+details.more > div{padding:0 14px 12px;display:flex;flex-direction:column;gap:8px}
+
+/* graph */
+svg.graph{display:block;width:100%;height:auto;touch-action:pan-y;font-family:var(--serif)}
+.g-grid{stroke:var(--line-2);stroke-width:1}
+.g-axis{stroke:var(--ink-3);stroke-width:1.4;fill:none}
+.axis-head{fill:var(--ink-3)}
+.g-tick{fill:var(--ink-3);font-family:var(--font);font-size:13px}
+.g-axl{fill:var(--ink-2);font-style:italic;font-size:17px}
+.cv{fill:none;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round;transition:stroke .3s,stroke-width .2s,opacity .2s}
+.cv.c1{stroke:var(--c1)} .cv.c2{stroke:var(--c2)} .cv.cn{stroke:var(--cn)} .cv.cx{stroke:var(--ink-2)}
+.cv.thick{stroke-width:4.4}
+.cv.dash{stroke-dasharray:10 6}
+.cv.faint{opacity:.35;stroke-dasharray:6 6}
+.cv.dim{opacity:.25}
+.hit{fill:none;stroke:transparent;stroke-width:22;cursor:pointer;pointer-events:stroke}
+.ar{stroke:none;transition:fill-opacity .25s,fill .25s}
+.ar.area{fill:var(--area);fill-opacity:var(--area-op)}
+.ar.reg2{fill:var(--reg2);fill-opacity:var(--reg2-op)}
+.ar.regG{fill:var(--regG);fill-opacity:var(--regG-op)}
+.ar.q{fill:var(--ink-3);fill-opacity:.12}
+.ar.bad{fill:var(--bad);fill-opacity:.18}
+.ar.hl{fill-opacity:.55}
+.ar.dim{fill-opacity:.08}
+.ar.click{cursor:pointer}
+.ar.click:hover{fill-opacity:.4}
+.sl{fill:var(--slice);fill-opacity:var(--slice-op);stroke:var(--slice);stroke-width:1.4}
+.sl.thin{stroke-width:.6}
+.sl.nost{stroke:none;fill-opacity:.5}
+.sl.g1{fill:var(--regG);stroke:var(--ink-3);fill-opacity:.5}
+.sl.g2{fill:var(--reg2);stroke:var(--reg2);fill-opacity:.45}
+.sl.hot{fill-opacity:.7;stroke-width:2}
+.gd{stroke:var(--ink-3);stroke-width:1.3;stroke-dasharray:5 5;fill:none}
+.gd.solid{stroke-dasharray:none;opacity:.8}
+.gd.red{stroke:var(--bad);stroke-width:1.4}
+.gd.acc{stroke:var(--accent);stroke-width:2;stroke-dasharray:none}
+.br{stroke:var(--ink-2);stroke-width:1.4;fill:none}
+.br.k1{stroke:var(--c1)} .br.k2{stroke:var(--c2)} .br.kS{stroke:var(--slice);stroke-width:2}
+.pt{fill:var(--pt);stroke:var(--surface);stroke-width:2.2}
+.pt.c1{fill:var(--c1)} .pt.c2{fill:var(--c2)}
+.pt.pulse{animation:pulse 1.4s ease-in-out 2}
+@keyframes pulse{50%{r:9}}
+.lb{font-size:16px;fill:var(--ink);paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round}
+.lb.it{font-style:italic}
+.lb.c1{fill:var(--c1)} .lb.c2{fill:var(--c2)} .lb.cn{fill:var(--cn)} .lb.m{fill:var(--ink-2);font-size:14px}
+.lb.sm{font-size:13.5px}
+.lb.big{font-size:20px;font-weight:600}
+.lb.kS{fill:var(--slice)} .lb.red{fill:var(--bad)} .lb.acc{fill:var(--accent-ink)}
+.lb.ui{font-family:var(--font);font-weight:600}
+g.hidden{display:none}
+
+/* cover */
+.cover{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:34px;align-items:center;min-height:calc(100% - 20px)}
+@media (max-width:920px){.cover{grid-template-columns:minmax(0,1fr)}}
+.cover h1{font-size:clamp(36px,5vw,62px);font-weight:800;letter-spacing:-.02em;line-height:1.02}
+.cover h1 span{display:block;color:var(--accent)}
+.cover .who{display:grid;gap:2px;font-size:15px;color:var(--ink-2);border-top:1px solid var(--line);padding-top:12px}
+.cover .who b{color:var(--ink);font-size:17px}
+.cover ol.obj{margin:0;padding-left:20px;display:grid;gap:4px;color:var(--ink-2);font-size:15.5px}
+
+/* menu */
+.menu{position:fixed;inset:0;z-index:40;display:flex;justify-content:flex-start;background:rgba(10,20,18,.45)}
+.menu[hidden]{display:none!important}
+.menu-in{width:min(430px,100%);height:100%;background:var(--surface);overflow:auto;padding:18px 16px calc(18px + env(safe-area-inset-bottom,0px));padding-top:calc(18px + env(safe-area-inset-top,0px));display:flex;flex-direction:column;gap:12px;box-shadow:4px 0 30px rgba(0,0,0,.2)}
+.menu-sec{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);margin:8px 4px 2px}
+.menu-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+.menu-list button{width:100%;display:grid;grid-template-columns:30px minmax(0,1fr) 22px;gap:8px;align-items:center;text-align:left;border:0;background:transparent;padding:8px 8px;border-radius:7px;cursor:pointer;font-size:15px}
+.menu-list button:hover{background:var(--surface-2)}
+.menu-list button.cur{background:var(--accent-soft);color:var(--accent-ink);font-weight:600}
+.menu-list .no{font-family:var(--mono);font-size:12px;color:var(--ink-3)}
+.menu-list .st{font-size:13px;color:var(--ok);text-align:center}
+.menu-list .st.v{color:var(--ink-3)}
+
+/* tree */
+.tree{display:grid;gap:14px}
+.tnode{border:1.5px solid var(--line);border-radius:var(--r);padding:12px 14px;background:var(--surface);transition:border-color .25s,background .25s}
+.tnode.q{font-weight:600}
+.tnode.leaf{font-family:var(--mono);font-size:14px;letter-spacing:.06em;text-transform:uppercase;text-align:center;font-weight:600}
+.tnode.on{border-color:var(--accent);background:var(--accent-soft)}
+.tbranch{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px}
+.tarrow{font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:var(--ink-3);display:flex;align-items:center;gap:6px;margin:0 0 6px 4px}
+.tarrow.on{color:var(--accent-ink);font-weight:600}
+.tcol{display:flex;flex-direction:column}
+
+/* workflow */
+.wf{display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:6px}
+@media (max-width:1100px){.wf{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.wf button{display:flex;flex-direction:column;gap:4px;align-items:flex-start;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--surface);cursor:pointer;text-align:left;font-size:13px;font-weight:600;line-height:1.25;min-height:72px}
+.wf button span{font-family:var(--mono);font-size:11px;color:var(--ink-3)}
+.wf button.on{border-color:var(--accent);background:var(--accent-soft);color:var(--accent-ink)}
+.wf button.past{border-color:var(--accent-2)}
+
+/* solver */
+.stage{display:flex;flex-direction:column;gap:8px;animation:fadeIn .3s ease}
+.stage-h{display:flex;gap:10px;align-items:center;font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent-ink)}
+.dots{display:flex;gap:6px}
+.dots i{width:28px;height:6px;border-radius:3px;background:var(--line)}
+.dots i.on{background:var(--accent)}
+
+/* quiz */
+.order{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.order li{display:flex;gap:8px;align-items:center;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface-3);cursor:grab;font-size:15px}
+.order li.drag{opacity:.5}
+.order li.over{border-color:var(--accent)}
+.order li .no{font-family:var(--mono);font-size:12px;color:var(--ink-3);width:18px}
+.order li .grow{flex:1}
+.order li button{border:1px solid var(--line);background:var(--surface);border-radius:6px;width:30px;height:30px;cursor:pointer}
+.score{font-size:40px;font-weight:800;font-variant-numeric:tabular-nums;color:var(--accent-ink)}
+.sumtab{width:100%;border-collapse:collapse;font-size:15px}
+.sumtab th{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);text-align:left;font-weight:600;padding:6px 8px;border-bottom:1px solid var(--line)}
+.sumtab td{padding:8px;border-bottom:1px solid var(--line-2);vertical-align:middle}
+.tablewrap{overflow-x:auto}
+textarea{width:100%;min-height:110px;border-radius:8px;border:1px solid var(--line);background:var(--surface-3);padding:10px;font-size:15px;resize:vertical}
+
+.fx-parts{display:flex;flex-wrap:wrap;align-items:center;gap:4px;font-size:20px}
+.fx-parts .eq{padding:0 4px}
+.fx-part{border:1.5px dashed var(--line);background:var(--surface);border-radius:8px;padding:4px 8px;cursor:pointer;min-height:48px}
+.fx-part:hover,.fx-part.on{border-style:solid;border-color:var(--accent);background:var(--accent-soft)}
+.fx-part.p1{color:var(--c1)} .fx-part.p2{color:var(--c2)}
+
+@media (max-width:600px){
+  .slide{padding-inline:16px;padding-block:16px 32px}
+  .topbar,.navbar{padding-inline:12px}
+  .btn.nav{min-width:0;padding-inline:10px}
+  .btn.nav .long{display:none}
+  .field-grid{grid-template-columns:minmax(0,1fr)}
+  .plate{font-size:16px} .plate.big{font-size:17px}
+  .step > div{font-size:15px}
+  .lb{font-size:22px} .lb.sm{font-size:19px} .lb.big{font-size:25px} .g-tick{font-size:17px} .g-axl{font-size:21px}
+}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}main{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<div class="app" id="app">
+  <header class="topbar">
+    <button class="btn" id="btnMenu" type="button" aria-haspopup="dialog" aria-controls="menu">☰ MENU</button>
+    <div class="brand"><b id="hdrTitle">Aplikasi Integral – Luas Daerah</b><span>Kalkulus 2 · Pertemuan 2 · Teknik Industri UICI</span></div>
+    <button class="btn" id="btnReset" type="button" title="Kembalikan slide ini ke keadaan awal">↺ RESET</button>
+  </header>
+  <div class="progress" aria-hidden="true"><i id="prog"></i></div>
+  <main id="main" tabindex="-1"></main>
+  <nav class="navbar" aria-label="Navigasi slide">
+    <button class="btn nav" id="btnPrev" type="button">← <span class="long">PREVIOUS</span></button>
+    <div class="counter"><span id="cnt">SLIDE 01 / 26</span><small id="cntSec"></small></div>
+    <button class="btn nav primary" id="btnNext" type="button"><span class="long">NEXT</span> →</button>
+  </nav>
+</div>
+<div class="menu" id="menu" hidden role="dialog" aria-modal="true" aria-label="Daftar slide">
+  <div class="menu-in">
+    <div class="row" style="justify-content:space-between">
+      <h3>Daftar slide</h3>
+      <button class="btn sm" id="btnMenuClose" type="button">TUTUP ✕</button>
+    </div>
+    <p class="small muted">✓ = interaksi di slide selesai · • = sudah dibuka</p>
+    <div id="menuBody"></div>
+  </div>
+</div>
+
+<script>
+'use strict';
+/* =========================================================
+   UTILITIES
+   ========================================================= */
+const $ = (s, r = document) => r.querySelector(s);
+function E(tag, attrs, ...kids) {
+  const e = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs || {})) {
+    if (v == null || v === false) continue;
+    if (k === 'class') e.className = v;
+    else if (k === 'html') e.innerHTML = v;
+    else if (k.startsWith('on') && typeof v === 'function') e.addEventListener(k.slice(2), v);
+    else e.setAttribute(k, v === true ? '' : v);
+  }
+  for (const k of kids.flat()) { if (k == null || k === false) continue; e.append(k instanceof Node ? k : document.createTextNode(String(k))); }
+  return e;
+}
+const H = (html, cls) => E('div', { class: cls || null, html });
+const SVGNS = 'http://www.w3.org/2000/svg';
+function S(tag, attrs) { const e = document.createElementNS(SVGNS, tag); for (const [k, v] of Object.entries(attrs || {})) if (v != null) e.setAttribute(k, v); return e; }
+const m = (s, ...v) => '\\(' + String.raw(s, ...v) + '\\)';
+const dm = (s, ...v) => '\\[' + String.raw(s, ...v) + '\\]';
+const fmt = (v, d = 3) => { let s = (+v).toFixed(d); if (s.includes('.')) s = s.replace(/0+$/, '').replace(/\.$/, ''); if (s === '-0') s = '0'; return s.replace('-', '−').replace('.', ','); };
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const reduced = () => window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+let UID = 0; const uid = p => (p || 'u') + (++UID);
+
+/* ---------- MathJax typesetting queue ---------- */
+let mjChain = Promise.resolve();
+const mjPending = new Set();
+function typeset(el) {
+  if (!el) return;
+  if (!window.__mjReady) { mjPending.add(el); return; }
+  mjChain = mjChain.then(() => {
+    if (!el.isConnected) return;
+    try { MathJax.typesetClear([el]); } catch (e) {}
+    return MathJax.typesetPromise([el]);
+  }).catch(e => console.warn('MathJax', e));
+}
+window.__onMJ = () => { const list = [...mjPending]; mjPending.clear(); list.forEach(typeset); };
+function setMath(el, html) { el.innerHTML = html; typeset(el); }
+
+/* ---------- exact fractions ---------- */
+const gcd = (a, b) => { a = Math.abs(a); b = Math.abs(b); while (b) [a, b] = [b, a % b]; return a || 1; };
+class Fr {
+  constructor(n, d = 1) { if (d < 0) { n = -n; d = -d; } const g = gcd(n, d); this.n = n / g; this.d = d / g; }
+  static of(x) { return x instanceof Fr ? x : new Fr(x, 1); }
+  add(o) { o = Fr.of(o); return new Fr(this.n * o.d + o.n * this.d, this.d * o.d); }
+  sub(o) { o = Fr.of(o); return new Fr(this.n * o.d - o.n * this.d, this.d * o.d); }
+  mul(o) { o = Fr.of(o); return new Fr(this.n * o.n, this.d * o.d); }
+  get v() { return this.n / this.d; }
+  tex() { if (this.d === 1) return String(this.n); return (this.n < 0 ? '-' : '') + '\\frac{' + Math.abs(this.n) + '}{' + this.d + '}'; }
+  txt() { return this.d === 1 ? String(this.n).replace('-', '−') : (this.n < 0 ? '−' : '') + Math.abs(this.n) + '/' + this.d; }
+}
+/* integrate polynomial (integer coeffs, index = power) from a to b exactly */
+function polyInt(c, a, b) { let s = new Fr(0); c.forEach((ck, k) => { if (!ck) return; s = s.add(new Fr(ck * (Math.pow(b, k + 1) - Math.pow(a, k + 1)), k + 1)); }); return s; }
+
+function parseAns(s) {
+  s = String(s || '').trim().replace(/\s+/g, '').replace(/[−–]/g, '-').replace(',', '.');
+  if (!s) return null;
+  const f = s.match(/^(-?\d+(?:\.\d+)?)\/(-?\d+(?:\.\d+)?)$/);
+  if (f) { const d = +f[2]; return d ? +f[1] / d : null; }
+  if (/^-?(\d+\.?\d*|\.\d+)$/.test(s)) return +s;
+  return null;
+}
+
+/* =========================================================
+   GRAPH ENGINE (SVG)
+   ========================================================= */
+function svgText(t, str) {
+  t.textContent = '';
+  String(str).split(/(_\{[^}]*\}|_[A-Za-z0-9])/).forEach(p => {
+    if (!p) return;
+    if (p[0] === '_' && p.length > 1) { const ts = S('tspan', { 'baseline-shift': 'sub', 'font-size': '72%' }); ts.textContent = p[1] === '{' ? p.slice(2, -1) : p.slice(1); t.appendChild(ts); }
+    else t.appendChild(document.createTextNode(p));
+  });
+  return t;
+}
+let GID = 0;
+class Graph {
+  constructor(host, o) {
+    this.o = Object.assign({ w: 600, h: 440, pad: [46, 22, 18, 34], x: [-1, 2], y: [-1, 2], gx: 1, gy: null, lx: null, ly: null, aria: 'Grafik' }, o);
+    const { w, h, pad } = this.o;
+    this.o.gy = this.o.gy || this.o.gx; this.o.lx = this.o.lx || this.o.gx; this.o.ly = this.o.ly || this.o.gy;
+    this.L = pad[0]; this.R = w - pad[1]; this.T = pad[2]; this.B = h - pad[3];
+    const id = ++GID; this.id = id;
+    this.svg = S('svg', { viewBox: `0 0 ${w} ${h}`, class: 'graph', role: 'img', 'aria-label': this.o.aria });
+    const defs = S('defs');
+    const cp = S('clipPath', { id: 'cp' + id }); cp.appendChild(S('rect', { x: this.L, y: this.T, width: this.R - this.L, height: this.B - this.T })); defs.appendChild(cp);
+    const mk = S('marker', { id: 'ah' + id, viewBox: '0 0 10 10', refX: 8, refY: 5, markerWidth: 8, markerHeight: 8, orient: 'auto-start-reverse' });
+    mk.appendChild(S('path', { d: 'M0,1 L10,5 L0,9 z', class: 'axis-head' })); defs.appendChild(mk);
+    this.svg.appendChild(defs);
+    this.ly = {};
+    for (const n of ['grid', 'axes', 'area', 'slices', 'guides', 'curves', 'marks', 'labels', 'top']) {
+      const g = S('g', { class: 'ly-' + n });
+      if (['area', 'slices', 'guides', 'curves'].includes(n)) g.setAttribute('clip-path', `url(#cp${id})`);
+      this.svg.appendChild(g); this.ly[n] = g;
+    }
+    this.drawAxes();
+    host.appendChild(this.svg);
+  }
+  sx(x) { const [a, b] = this.o.x; return this.L + (x - a) / (b - a) * (this.R - this.L); }
+  sy(y) { const [a, b] = this.o.y; return this.B - (y - a) / (b - a) * (this.B - this.T); }
+  fx(x) { const [a, b] = this.o.x; return a + (x - this.L) / (this.R - this.L) * (b - a); }
+  add(layer, tag, attrs) { const e = S(tag, attrs); this.ly[layer].appendChild(e); return e; }
+  clear(layer) { this.ly[layer].replaceChildren(); }
+  group(layer, cls) { return this.add(layer, 'g', { class: cls || null }); }
+  drawAxes() {
+    const { x: [x0, x1], y: [y0, y1], gx, gy, lx, ly } = this.o;
+    const eps = 1e-9;
+    for (let v = Math.ceil(x0 / gx) * gx; v <= x1 + eps; v += gx) { const X = this.sx(v); this.add('grid', 'line', { x1: X, x2: X, y1: this.T, y2: this.B, class: 'g-grid' }); }
+    for (let v = Math.ceil(y0 / gy) * gy; v <= y1 + eps; v += gy) { const Y = this.sy(v); this.add('grid', 'line', { x1: this.L, x2: this.R, y1: Y, y2: Y, class: 'g-grid' }); }
+    const ax = (y0 <= 0 && y1 >= 0) ? this.sy(0) : this.B;
+    const ay = (x0 <= 0 && x1 >= 0) ? this.sx(0) : this.L;
+    this.add('axes', 'line', { x1: this.L - 4, x2: this.R + 6, y1: ax, y2: ax, class: 'g-axis', 'marker-end': `url(#ah${this.id})` });
+    this.add('axes', 'line', { x1: ay, x2: ay, y1: this.B + 4, y2: this.T - 6, class: 'g-axis', 'marker-end': `url(#ah${this.id})` });
+    for (let v = Math.ceil(x0 / lx) * lx; v <= x1 + eps; v += lx) {
+      if (Math.abs(v) < eps) continue; const X = this.sx(v); if (X > this.R - 8) continue;
+      this.add('axes', 'line', { x1: X, x2: X, y1: ax - 4, y2: ax + 4, class: 'g-axis' });
+      const t = this.add('axes', 'text', { x: X, y: ax + 18, 'text-anchor': 'middle', class: 'g-tick' }); t.textContent = fmt(v, 2);
+    }
+    for (let v = Math.ceil(y0 / ly) * ly; v <= y1 + eps; v += ly) {
+      if (Math.abs(v) < eps) continue; const Y = this.sy(v); if (Y < this.T + 8) continue;
+      this.add('axes', 'line', { x1: ay - 4, x2: ay + 4, y1: Y, y2: Y, class: 'g-axis' });
+      const t = this.add('axes', 'text', { x: ay - 8, y: Y + 4.5, 'text-anchor': 'end', class: 'g-tick' }); t.textContent = fmt(v, 2);
+    }
+    if (x0 <= 0 && x1 >= 0 && y0 <= 0 && y1 >= 0) { const t = this.add('axes', 'text', { x: ay - 7, y: ax + 17, 'text-anchor': 'end', class: 'g-tick' }); t.textContent = '0'; }
+    const tx = this.add('axes', 'text', { x: this.R + 4, y: ax - 10, 'text-anchor': 'end', class: 'g-axl' }); tx.textContent = 'x';
+    const ty = this.add('axes', 'text', { x: ay + 10, y: this.T + 10, class: 'g-axl' }); ty.textContent = 'y';
+  }
+  dFx(f, a, b, n = 220) { let d = ''; for (let i = 0; i <= n; i++) { const x = a + (b - a) * i / n; const y = clamp(f(x), -1e4, 1e4); d += (i ? 'L' : 'M') + this.sx(x).toFixed(2) + ',' + this.sy(y).toFixed(2); } return d; }
+  dXy(h, c, d, n = 220) { let s = ''; for (let i = 0; i <= n; i++) { const y = c + (d - c) * i / n; const x = clamp(h(y), -1e4, 1e4); s += (i ? 'L' : 'M') + this.sx(x).toFixed(2) + ',' + this.sy(y).toFixed(2); } return s; }
+  curve(f, a, b, o = {}) { const g = this.group(o.layer || 'curves', o.key ? 'k-' + o.key : null); const d = this.dFx(f, a, b); const p = S('path', { d, class: 'cv ' + (o.cls || 'c1') }); g.appendChild(p); if (o.hit) { const hp = S('path', { d, class: 'hit' }); g.appendChild(hp); hp.addEventListener('click', o.hit); } return p; }
+  curveY(h, c, d, o = {}) { const g = this.group(o.layer || 'curves', o.key ? 'k-' + o.key : null); const dd = this.dXy(h, c, d); const p = S('path', { d: dd, class: 'cv ' + (o.cls || 'c1') }); g.appendChild(p); if (o.hit) { const hp = S('path', { d: dd, class: 'hit' }); g.appendChild(hp); hp.addEventListener('click', o.hit); } return p; }
+  dAreaX(top, bot, a, b, n = 160) { let d = ''; for (let i = 0; i <= n; i++) { const x = a + (b - a) * i / n; d += (i ? 'L' : 'M') + this.sx(x).toFixed(2) + ',' + this.sy(top(x)).toFixed(2); } for (let i = n; i >= 0; i--) { const x = a + (b - a) * i / n; d += 'L' + this.sx(x).toFixed(2) + ',' + this.sy(bot(x)).toFixed(2); } return d + 'Z'; }
+  dAreaY(right, left, c, d, n = 160) { let s = ''; for (let i = 0; i <= n; i++) { const y = c + (d - c) * i / n; s += (i ? 'L' : 'M') + this.sx(right(y)).toFixed(2) + ',' + this.sy(y).toFixed(2); } for (let i = n; i >= 0; i--) { const y = c + (d - c) * i / n; s += 'L' + this.sx(left(y)).toFixed(2) + ',' + this.sy(y).toFixed(2); } return s + 'Z'; }
+  areaX(top, bot, a, b, o = {}) { return this.add(o.layer || 'area', 'path', { d: this.dAreaX(top, bot, a, b), class: 'ar ' + (o.cls || 'area') }); }
+  areaY(right, left, c, d, o = {}) { return this.add(o.layer || 'area', 'path', { d: this.dAreaY(right, left, c, d), class: 'ar ' + (o.cls || 'area') }); }
+  rect(x0, x1, y0, y1, o = {}) { const X0 = this.sx(Math.min(x0, x1)), X1 = this.sx(Math.max(x0, x1)), Y0 = this.sy(Math.max(y0, y1)), Y1 = this.sy(Math.min(y0, y1)); return this.add(o.layer || 'slices', 'rect', { x: X0, y: Y0, width: Math.max(X1 - X0, .6), height: Math.max(Y1 - Y0, .6), class: 'sl ' + (o.cls || '') }); }
+  seg(x0, y0, x1, y1, o = {}) { return this.add(o.layer || 'guides', 'line', { x1: this.sx(x0), y1: this.sy(y0), x2: this.sx(x1), y2: this.sy(y1), class: o.cls || 'gd' }); }
+  vline(x, o = {}) { return this.seg(x, this.o.y[0], x, this.o.y[1], o); }
+  hline(y, o = {}) { return this.seg(this.o.x[0], y, this.o.x[1], y, o); }
+  dot(x, y, o = {}) { return this.add(o.layer || 'marks', 'circle', { cx: this.sx(x), cy: this.sy(y), r: o.r || 5.5, class: 'pt ' + (o.cls || '') }); }
+  text(x, y, str, o = {}) { const t = this.add(o.layer || 'labels', 'text', { x: this.sx(x) + (o.dx || 0), y: this.sy(y) + (o.dy || 0), 'text-anchor': o.anchor || 'start', class: 'lb ' + (o.cls || '') }); svgText(t, str); return t; }
+  /* vertical bracket at data-x from y0..y1 with label */
+  vbrace(x, y0, y1, label, o = {}) {
+    const g = this.add(o.layer || 'top', 'g'); const X = this.sx(x), Y0 = this.sy(y0), Y1 = this.sy(y1); const s = o.side === 'left' ? -1 : 1;
+    g.appendChild(S('path', { d: `M${X - 5 * s},${Y0} L${X},${Y0} L${X},${Y1} L${X - 5 * s},${Y1}`, class: 'br ' + (o.cls || '') }));
+    const t = S('text', { x: X + 7 * s, y: (Y0 + Y1) / 2 + 5, 'text-anchor': s > 0 ? 'start' : 'end', class: 'lb it sm ' + (o.tcls || '') }); svgText(t, label); g.appendChild(t); return g;
+  }
+  hbrace(y, x0, x1, label, o = {}) {
+    const g = this.add(o.layer || 'top', 'g'); const Y = this.sy(y), X0 = this.sx(x0), X1 = this.sx(x1); const s = o.side === 'top' ? -1 : 1;
+    g.appendChild(S('path', { d: `M${X0},${Y - 5 * s} L${X0},${Y} L${X1},${Y} L${X1},${Y - 5 * s}`, class: 'br ' + (o.cls || '') }));
+    const t = S('text', { x: (X0 + X1) / 2, y: Y + (s > 0 ? 18 : -8), 'text-anchor': 'middle', class: 'lb it sm ' + (o.tcls || '') }); svgText(t, label); g.appendChild(t); return g;
+  }
+}
+/* animate an area growing from a to b; pathAt(t) returns d */
+function animatePath(path, pathAt, dur = 1100, done) {
+  if (reduced()) { path.setAttribute('d', pathAt(1)); done && done(); return; }
+  const t0 = performance.now();
+  const step = now => {
+    if (!path.isConnected) return;
+    const t = clamp((now - t0) / dur, 0, 1); const e = 1 - Math.pow(1 - t, 3);
+    path.setAttribute('d', pathAt(Math.max(e, 0.002)));
+    if (t < 1) requestAnimationFrame(step); else done && done();
+  };
+  requestAnimationFrame(step);
+}
+function growAreaX(g, top, bot, a, b, cls, dur, done) {
+  const p = g.add('area', 'path', { class: 'ar ' + (cls || 'area'), d: '' });
+  animatePath(p, t => g.dAreaX(top, bot, a, a + (b - a) * t, Math.max(8, Math.round(160 * t))), dur, done); return p;
+}
+function growAreaY(g, right, left, c, d, cls, dur, done) {
+  const p = g.add('area', 'path', { class: 'ar ' + (cls || 'area'), d: '' });
+  animatePath(p, t => g.dAreaY(right, left, c, c + (d - c) * t, Math.max(8, Math.round(160 * t))), dur, done); return p;
+}
+
+/* =========================================================
+   UI COMPONENTS
+   ========================================================= */
+function setFb(box, kind, html) {
+  const head = { ok: '✓ BENAR', bad: '✗ COBA LAGI', info: 'SOLUSI' }[kind] || '';
+  box.className = 'fb ' + kind; box.hidden = false;
+  box.innerHTML = `<strong>${head}</strong>${html ? ' ' + html : ''}`; typeset(box);
+}
+/* Multiple choice. opts: [{t, ok, fb}] */
+function mcq(parent, o) {
+  const wrap = E('div', { class: 'q' });
+  if (o.tag) wrap.append(E('div', { class: 'q-tag' }, o.tag));
+  if (o.q) wrap.append(E('p', { class: 'q-text', html: o.q }));
+  const list = E('div', { class: 'opts' + (o.cols ? ' cols' : '') });
+  const fb = E('div', { class: 'fb', hidden: true, 'aria-live': 'polite' });
+  const tools = E('div', { class: 'q-tools', hidden: true });
+  const hintBox = E('div', { class: 'hint', hidden: true });
+  let solved = false, tries = 0;
+  const btns = o.opts.map((op, i) => {
+    const b = E('button', { class: 'opt', type: 'button', html: `<span class="opt-k">${'ABCDEFG'[i]}</span><span class="opt-t">${op.t}</span>` });
+    b.addEventListener('click', () => {
+      if (solved) return; tries++;
+      btns.forEach(x => x.classList.remove('is-wrong'));
+      if (op.ok) {
+        solved = true; b.classList.add('is-right'); btns.forEach(x => x.disabled = true);
+        setFb(fb, 'ok', op.fb || ''); tools.hidden = true; hintBox.hidden = true;
+        o.key && App.done(o.key); o.onCorrect && o.onCorrect(tries === 1);
+      } else { b.classList.add('is-wrong'); setFb(fb, 'bad', op.fb || ''); tools.hidden = false; o.onWrong && o.onWrong(i); }
+    });
+    list.append(b); return b;
+  });
+  if (o.hint) tools.append(E('button', { class: 'btn sm', type: 'button', onclick: () => { hintBox.hidden = false; setMath(hintBox, '<strong>Hint.</strong> ' + o.hint); } }, 'SHOW HINT'));
+  tools.append(E('button', { class: 'btn sm', type: 'button', onclick: () => { btns.forEach(x => x.classList.remove('is-wrong')); fb.hidden = true; hintBox.hidden = true; tools.hidden = true; } }, 'TRY AGAIN'));
+  tools.append(E('button', {
+    class: 'btn sm', type: 'button', onclick: () => {
+      if (solved) return; solved = true; const k = o.opts.findIndex(x => x.ok);
+      btns.forEach(x => { x.classList.remove('is-wrong'); x.disabled = true; }); btns[k].classList.add('is-right');
+      setFb(fb, 'info', o.sol || o.opts[k].fb || ''); tools.hidden = true;
+      o.key && App.done(o.key); o.onCorrect && o.onCorrect(false, true);
+    }
+  }, 'SHOW SOLUTION'));
+  wrap.append(list, fb, tools, hintBox); parent.append(wrap); typeset(wrap);
+  return { el: wrap, get solved() { return solved; } };
+}
+/* Numeric answer with exact form */
+function numq(parent, o) {
+  const wrap = E('div', { class: 'q' });
+  if (o.tag) wrap.append(E('div', { class: 'q-tag' }, o.tag));
+  if (o.q) wrap.append(E('p', { class: 'q-text', html: o.q }));
+  const id = uid('num');
+  const inp = E('input', { id, type: 'text', inputmode: 'text', autocomplete: 'off', placeholder: o.ph || 'mis. 1/6', 'aria-label': 'Jawaban' });
+  const check = E('button', { class: 'btn primary sm', type: 'button' }, 'CHECK ANSWER');
+  const row = E('div', { class: 'num-row' }, o.pre ? E('span', { html: o.pre }) : null, inp, check);
+  const fb = E('div', { class: 'fb', hidden: true, 'aria-live': 'polite' });
+  const hintBox = E('div', { class: 'hint', hidden: true });
+  let solved = false, hintK = 0, tries = 0;
+  const hints = [].concat(o.hint || []);
+  const hb = hints.length ? E('button', { class: 'btn sm', type: 'button', onclick: () => { hintBox.hidden = false; const hk = hints[Math.min(hintK, hints.length - 1)]; hintK++; setMath(hintBox, `<strong>Hint${hints.length > 1 ? ' ' + Math.min(hintK, hints.length) : ''}.</strong> ` + hk); if (hintK >= hints.length) hb.disabled = true; } }, 'SHOW HINT') : null;
+  const sb = E('button', { class: 'btn sm', type: 'button', onclick: () => finish(false, true) }, 'SHOW SOLUTION');
+  const tools = E('div', { class: 'q-tools' }, hb, sb);
+  function finish(ok, shown) {
+    if (solved) return; solved = true; inp.disabled = true; check.disabled = true; tools.hidden = true;
+    if (shown) { inp.value = o.exactTxt || ''; setFb(fb, 'info', o.sol || ''); }
+    o.key && App.done(o.key); o.onCorrect && o.onCorrect(ok && tries === 1, shown);
+  }
+  const doCheck = () => {
+    if (solved) return; const v = parseAns(inp.value);
+    if (v == null) { inp.className = 'bad'; setFb(fb, 'bad', 'Tulis angka atau pecahan, mis. <code>1/6</code>, <code>-2</code>, atau <code>0,5</code>.'); return; }
+    tries++;
+    const ok = Math.abs(v - o.ans) <= (o.tol != null ? o.tol : 0.005);
+    inp.className = ok ? 'ok' : 'bad';
+    if (ok) {
+      const isExact = /\//.test(inp.value) || Number.isInteger(o.ans) || !o.exactTxt;
+      setFb(fb, 'ok', (o.okFb || '') + (isExact ? '' : ` Tuliskan dalam bentuk eksak: ${m`${o.exact}`}.`));
+      finish(true, false);
+    } else { setFb(fb, 'bad', (o.badFb ? o.badFb(v) : '') || 'Periksa kembali langkah Anda, lalu coba lagi.'); }
+  };
+  check.addEventListener('click', doCheck);
+  inp.addEventListener('keydown', e => { if (e.key === 'Enter') doCheck(); });
+  wrap.append(row, fb, tools, hintBox); parent.append(wrap); typeset(wrap);
+  return { el: wrap };
+}
+/* Step-by-step reveal. steps: [{label, html, on}] */
+function stepper(parent, steps, o = {}) {
+  const wrap = E('div', { class: 'stepper' });
+  const out = E('ol', { class: 'steps' });
+  let i = 0; let btns = [], next;
+  if (o.labels) {
+    const row = E('div', { class: 'step-btns' });
+    btns = steps.map((s, k) => { const b = E('button', { class: 'btn sm step-btn', type: 'button', disabled: k > 0 }, E('span', { class: 'n' }, k + 1), s.label); b.addEventListener('click', () => { if (k === i) reveal(); }); row.append(b); return b; });
+    wrap.append(row);
+  } else {
+    next = E('button', { class: 'btn primary', type: 'button' }, '');
+    next.addEventListener('click', () => reveal());
+    wrap.append(E('div', { class: 'row' }, next));
+  }
+  const upd = () => {
+    if (next) { next.textContent = i < steps.length ? `${o.btnText || 'LIHAT LANGKAH'} (${i + 1}/${steps.length})` : 'SEMUA LANGKAH TERBUKA ✓'; next.disabled = i >= steps.length; }
+    btns.forEach((b, k) => { b.disabled = k !== i; b.classList.toggle('done', k < i); });
+  };
+  function reveal() {
+    if (i >= steps.length) return; const s = steps[i];
+    const li = E('li', { class: 'step' }, E('div', { html: (s.label && o.labels ? `<span class="st-h">${s.label}</span>` : (s.head ? `<span class="st-h">${s.head}</span>` : '')) + s.html }));
+    out.append(li); typeset(li); i++; upd(); s.on && s.on();
+    if (i === steps.length) { o.key && App.done(o.key); o.onDone && o.onDone(); }
+  }
+  wrap.append(out); parent.append(wrap); upd();
+  return { reveal, get i() { return i; } };
+}
+function seg(parent, opts, onChange, init = 0, aria) {
+  const w = E('div', { class: 'seg', role: 'group', 'aria-label': aria || 'Pilihan' });
+  const btns = opts.map((t, i) => { const b = E('button', { type: 'button', class: 'seg-b', 'aria-pressed': String(i === init), html: t }); b.addEventListener('click', () => { btns.forEach((x, j) => x.setAttribute('aria-pressed', String(j === i))); onChange(i); }); w.append(b); return b; });
+  parent.append(w); if (init != null && init >= 0) onChange(init);
+  return { el: w, set(i) { btns[i].click(); } };
+}
+function slider(parent, o) {
+  const id = uid('rng');
+  const r = E('input', { type: 'range', id, min: o.min, max: o.max, step: o.step, value: o.value });
+  const out = E('output', { for: id });
+  const w = E('div', { class: 'slider' }, E('div', { class: 'slider-top' }, E('label', { for: id, html: o.label }), out), r);
+  const upd = () => { const v = +r.value; out.innerHTML = o.fmt ? o.fmt(v) : fmt(v, 2); o.oninput(v); };
+  r.addEventListener('input', upd); parent.append(w); upd();
+  return r;
+}
+function readout(parent, items) {
+  const w = E('div', { class: 'readout' }); const refs = {};
+  items.forEach(([k, label, cls]) => { const b = E('b', { class: cls || null }, '–'); w.append(E('div', {}, E('span', { html: label }), b)); refs[k] = b; });
+  parent.append(w); return refs;
+}
+/* sequential stages */
+function chain(fns) { let k = 0; const run = () => { if (k < fns.length) { const f = fns[k++]; let called = false; f(() => { if (!called) { called = true; run(); } }); } }; run(); }
+function badge(kind, text) { return `<span class="badge ${kind}">${text}</span>`; }
+
+/* ---------- slide scaffold ---------- */
+function frame(root, o) {
+  const head = E('div', { class: 's-head' });
+  head.append(E('div', { class: 'eyebrow', html: o.eyebrow || '' }));
+  head.append(E('h2', { html: o.title }));
+  if (o.lead) head.append(E('p', { class: 'lead', html: o.lead }));
+  root.append(head);
+  const grid = E('div', { class: 'grid' + (o.even ? ' even' : '') });
+  const fig = E('div', { class: 'fig' }); const figBar = E('div', { class: 'fig-bar' }); fig.append(figBar);
+  const gHost = E('div'); fig.append(gHost);
+  const cap = E('p', { class: 'fig-cap', html: o.cap || '' }); if (o.cap) fig.append(cap);
+  const panel = E('div', { class: 'panel' });
+  grid.append(fig, panel); root.append(grid);
+  if (!o.bar) figBar.remove();
+  return { head, grid, fig, figBar, gHost, cap, panel };
+}
+function blk(parent, html, cls) { const b = E('div', { class: 'block ' + (cls || ''), html }); parent.append(b); return b; }
+function toggles(bar, g, items) {
+  items.forEach(([key, label]) => {
+    const id = uid('tg'); const c = E('input', { type: 'checkbox', id, checked: true });
+    c.addEventListener('change', () => g.svg.querySelectorAll('.k-' + key).forEach(n => n.classList.toggle('hidden', !c.checked)));
+    bar.append(E('label', { class: 'chk', for: id }, c, E('span', { html: label })));
+  });
+}
+</script>
+
+<script>
+'use strict';
+/* =========================================================
+   SLIDES 01–13
+   ========================================================= */
+const SL = [];
+const def = o => SL.push(o);
+const f_x = x => x, f_x2 = x => x * x;
+const eb = (n, t, extra) => `<span>${String(n).padStart(2, '0')} · ${t}</span>${extra || ''}`;
+
+/* ---------- 01 COVER ---------- */
+def({
+  sec: 'Pembuka', title: 'Aplikasi Integral – Luas Daerah', build(r) {
+    const w = E('div', { class: 'cover' });
+    const left = E('div', { class: 'panel', style: 'gap:18px' });
+    left.append(H('Kalkulus 2 · TIN613022 · Pertemuan 2', 'eyebrow'));
+    left.append(E('h1', { html: 'Aplikasi Integral <span>Luas Daerah</span>' }));
+    left.append(E('p', { class: 'lead', html: 'Program Studi Teknik Industri · Universitas Insan Cita Indonesia' }));
+    left.append(H('<b>Rizky Novera H, S.Si., M.T.</b><span>Dosen pengampu · materi sumber: slide Pertemuan 2</span>', 'who'));
+    left.append(H(`<h3 style="margin-bottom:6px">Tujuan pembelajaran</h3><ol class="obj"><li>Mampu menentukan luas daerah di atas sumbu koordinat.</li><li>Mampu menentukan luas daerah di bawah sumbu koordinat.</li><li>Mampu menentukan luas daerah di antara dua kurva.</li></ol>`));
+    left.append(E('div', { class: 'row' },
+      E('button', { class: 'btn primary', type: 'button', onclick: () => App.go(1) }, 'MULAI →'),
+      E('button', { class: 'btn', type: 'button', onclick: () => App.menu(true) }, '☰ LIHAT SEMUA SLIDE')));
+    const fig = E('div', { class: 'fig' });
+    const g = new Graph(fig, { x: [-0.3, 1.4], y: [-0.3, 1.4], gx: .25, lx: .5, aria: 'Daerah antara y = x dan y = x kuadrat' });
+    growAreaX(g, f_x, f_x2, 0, 1, 'area', 1800);
+    g.curve(f_x, -0.3, 1.4, { cls: 'c1' }); g.curve(f_x2, -0.3, 1.4, { cls: 'c2' });
+    g.text(1.2, 1.06, 'y = x', { cls: 'c1 it' }); g.text(0.64, 0.24, 'y = x²', { cls: 'c2 it' });
+    g.dot(0, 0); g.dot(1, 1);
+    g.text(0, 0, '(0, 0)', { dx: 8, dy: 20, cls: 'm' }); g.text(1, 1, '(1, 1)', { dx: -10, dy: -8, anchor: 'end', cls: 'm' });
+    fig.append(E('p', { class: 'fig-cap', html: `Daerah tertutup antara ${m`y=x`} dan ${m`y=x^2`}. Berapa luasnya? Modul ini membangun jawabannya langkah demi langkah.` }));
+    w.append(left, fig); r.append(w);
+  }
+});
+
+/* ---------- 02 RIEMANN ---------- */
+def({
+  sec: 'Konsep luas', title: 'Mengapa integral dapat menghitung luas?', build(r) {
+    const F = frame(r, {
+      eyebrow: eb(2, 'Konsep luas', badge('pdf', 'Kurva: Daerah I, Contoh Soal 2 · hal. 10')),
+      title: 'Mengapa integral dapat menghitung luas?',
+      lead: 'Daerah di bawah kurva tidak berbentuk persegi panjang. Kita potong menjadi banyak persegi panjang kecil, jumlahkan luasnya, lalu ambil limitnya.',
+      cap: `Daerah di bawah ${m`y=x^2`}, di atas sumbu-x, pada ${m`0\le x\le 1`}.`, bar: true
+    });
+    const g = new Graph(F.gHost, { x: [-0.12, 1.18], y: [-0.1, 1.15], gx: .25, lx: .5 });
+    g.areaX(f_x2, () => 0, 0, 1, { cls: 'area' });
+    g.curve(f_x2, -0.12, 1.18, { cls: 'c1' }); g.seg(1, 0, 1, 1, { cls: 'gd solid' });
+    g.text(1.02, 0.93, 'y = x²', { cls: 'c1 it', anchor: 'end', dx: -8 });
+    const N = [4, 10, 20, 50, 100]; let n = 4, mode = 1;
+    const P = F.panel;
+    blk(P, `<ol class="vflow">
+      <li><span>Bagi daerah menjadi <b>n</b> persegi panjang dengan lebar ${m`\Delta x=\tfrac{1}{n}`}.</span></li>
+      <li><span>Luas satu persegi panjang: ${m`\Delta A_i = f(x_i^*)\,\Delta x`}.</span></li>
+      <li><span>Jumlahkan semuanya: ${m`A \approx \sum_{i=1}^{n} f(x_i^*)\,\Delta x`}.</span></li>
+      <li><span>Ambil limit ${m`n\to\infty`}. Jumlah itu menjadi integral tentu.</span></li></ol>`);
+    const ctl = E('div', { class: 'block' }); P.append(ctl);
+    const ro = readout(P, [['n', 'n'], ['dx', 'Δx'], ['sum', 'Σ f(xᵢ*)Δx', 'kS'], ['ex', 'Luas eksak', 'kA'], ['err', 'Selisih']]);
+    const draw = () => {
+      g.clear('slices'); let s = 0;
+      for (let i = 0; i < n; i++) {
+        const x0 = i / n, x1 = (i + 1) / n, xs = mode === 0 ? x0 : mode === 1 ? (x0 + x1) / 2 : x1;
+        const h = f_x2(xs); s += h / n; g.rect(x0, x1, 0, h, { cls: n >= 50 ? 'thin' : '' });
+      }
+      ro.n.textContent = n; ro.dx.textContent = fmt(1 / n, 3); ro.sum.textContent = fmt(s, 6);
+      ro.ex.textContent = '1/3 ≈ 0,333333'; ro.err.textContent = fmt(Math.abs(s - 1 / 3), 6);
+    };
+    slider(ctl, { label: 'Jumlah partisi <b>n</b>', min: 0, max: 4, step: 1, value: 0, fmt: v => 'n = ' + N[v], oninput: v => { n = N[v]; draw(); } });
+    const sb = E('div', { class: 'row small muted' }, 'Titik sampel xᵢ*:'); F.figBar.append(sb);
+    seg(F.figBar, ['Kiri', 'Tengah', 'Kanan'], i => { mode = i; draw(); }, 1, 'Titik sampel');
+    blk(P, `<div class="plate"><span class="lbl">Limit jumlah = integral</span>${dm`A=\lim_{n\to\infty}\sum_{i=1}^{n} f(x_i^*)\,\Delta x=\int_0^1 x^2\,dx=\frac{1}{3}`}</div>`);
+    mcq(P, {
+      key: 'riemann', q: 'Geser slider ke n = 100. Apa yang terjadi pada selisih antara jumlah persegi panjang dan 1/3?',
+      opts: [
+        { t: 'Selisihnya mengecil dan mendekati 0', ok: true, fb: 'Semakin besar n, persegi panjang makin sempit dan celah atau kelebihannya makin kecil. Limit jumlah itulah integral tentu.' },
+        { t: 'Selisihnya membesar', fb: 'Perhatikan kolom Selisih saat n bertambah. Nilainya turun, tidak naik.' },
+        { t: 'Selisihnya tetap', fb: 'Coba bandingkan nilai Selisih untuk n = 4 dan n = 100.' }]
+    });
+  }
+});
+
+/* ---------- 03 ABOVE / BELOW AXIS ---------- */
+def({
+  sec: 'Konsep luas', title: 'Luas di atas dan di bawah sumbu-x', build(r) {
+    const F = frame(r, {
+      eyebrow: eb(3, 'Luas terhadap sumbu-x', badge('pdf', 'Materi hal. 3–4')),
+      title: 'Luas daerah di atas dan di bawah sumbu-x',
+      lead: 'Integral tentu bisa bernilai negatif, sedangkan luas selalu positif. Tanda fungsi menentukan cara menghitung luas.', bar: true,
+      cap: `Kurva ${m`y=x^2-1`}. Pilih kasus di atas grafik.`
+    });
+    const g = new Graph(F.gHost, { x: [-2.4, 2.4], y: [-1.5, 3.5], gx: .5, lx: 1 });
+    const f = x => x * x - 1;
+    g.curve(f, -2.4, 2.4, { cls: 'c1' }); g.text(-2.05, 3.1, 'y = x² − 1', { cls: 'c1 it', dx: 12 });
+    const P = F.panel;
+    blk(P, `<p class="src">Bila ${m`f(x)`} kontinu dan bernilai <b>tak negatif</b>, maka ${m`\int_a^b f(x)\,dx`} menyatakan luas daerah yang terletak <i>di bawah</i> kurva ${m`y=f(x)`}, ${m`a\le x\le b`}, dan <i>di atas</i> sumbu-x.</p>
+      <p class="src">Bila ${m`f(x)`} bernilai <b>tak positif</b>, maka luas daerah yang terletak <i>di atas</i> kurva ${m`y=f(x)`}, ${m`a\le x\le b`}, dan <i>di bawah</i> sumbu-x sama dengan ${m`-\int_a^b f(x)\,dx`}.</p>`);
+    const out = E('div', { class: 'plate' }); P.append(out);
+    seg(F.figBar, [`f(x) ≥ 0 pada [1, 2]`, `f(x) ≤ 0 pada [−1, 1]`], i => {
+      g.clear('area'); g.clear('slices'); g.clear('guides');
+      if (i === 0) {
+        g.areaX(f, () => 0, 1, 2, { cls: 'area' });
+        for (let k = 0; k < 4; k++) { const x0 = 1 + k / 4, xm = x0 + 1 / 8; g.rect(x0, x0 + .25, 0, f(xm)); }
+        g.vline(1, { cls: 'gd' }); g.vline(2, { cls: 'gd' });
+        setMath(out, `<span class="lbl">Kasus f(x) ≥ 0</span>${dm`\int_1^2 (x^2-1)\,dx=\Big[\tfrac{x^3}{3}-x\Big]_1^2=\tfrac{2}{3}-\big(-\tfrac{2}{3}\big)=\tfrac{4}{3}`}<p>Integral bernilai positif, jadi luasnya langsung ${m`\tfrac43`}.</p>`);
+      } else {
+        g.areaX(() => 0, f, -1, 1, { cls: 'reg2' });
+        for (let k = 0; k < 8; k++) { const x0 = -1 + k / 4, xm = x0 + 1 / 8; g.rect(x0, x0 + .25, f(xm), 0); }
+        g.vline(-1, { cls: 'gd' }); g.vline(1, { cls: 'gd' });
+        setMath(out, `<span class="lbl">Kasus f(x) ≤ 0</span>${dm`\int_{-1}^{1} (x^2-1)\,dx=\Big[\tfrac{x^3}{3}-x\Big]_{-1}^{1}=-\tfrac{2}{3}-\tfrac{2}{3}=-\tfrac{4}{3}`}<p>Setiap persegi panjang punya tinggi ${m`f(x_i)\lt 0`}, jadi jumlahnya negatif. Luasnya ${m`-\int_{-1}^{1}(x^2-1)\,dx=\tfrac43`}.</p>`);
+      }
+    }, 0, 'Kasus tanda fungsi');
+    blk(P, `<div class="plate"><span class="lbl">Rumus umum · materi hal. 4</span>${dm`L=\int_a^b |f(x)|\,dx`}<p class="small muted">Luas daerah yang dibatasi kurva ${m`y=f(x)`}, garis ${m`x=a`}, garis ${m`x=b`}, dan sumbu-x.</p></div>`);
+    mcq(P, {
+      key: 'sumbu', q: `Diketahui ${m`f(x)\le 0`} pada ${m`[a,b]`} dan ${m`\int_a^b f(x)\,dx=-\tfrac43`}. Berapa luas daerahnya?`,
+      opts: [
+        { t: m`\tfrac43`, ok: true, fb: `Luas = ${m`-\int_a^b f(x)\,dx = -\big(-\tfrac43\big)=\tfrac43`}. Luas selalu positif.` },
+        { t: m`-\tfrac43`, fb: 'Luas tidak pernah negatif. Untuk daerah di bawah sumbu-x, tanda integralnya dibalik.' },
+        { t: m`0`, fb: 'Integralnya tidak nol, dan daerahnya jelas punya luas. Balik tanda integralnya.' }]
+    });
+  }
+});
+
+/* ---------- shared: y = x^2 - 1 on [-2, 2] ---------- */
+function graphX2m1(host) {
+  const g = new Graph(host, { x: [-2.6, 2.6], y: [-1.6, 3.6], gx: .5, lx: 1, aria: 'Kurva y = x kuadrat minus 1 dengan garis x = -2 dan x = 2' });
+  const f = x => x * x - 1;
+  const R = [
+    g.areaX(f, () => 0, -2, -1, { cls: 'q' }),
+    g.areaX(() => 0, f, -1, 1, { cls: 'q' }),
+    g.areaX(f, () => 0, 1, 2, { cls: 'q' })];
+  g.curve(f, -2.6, 2.6, { cls: 'c1' });
+  g.vline(-2, { cls: 'gd solid' }); g.vline(2, { cls: 'gd solid' });
+  g.text(-2, -1.45, 'x = −2', { anchor: 'middle', cls: 'm' }); g.text(2, -1.45, 'x = 2', { anchor: 'middle', cls: 'm' });
+  g.text(0.62, 2.9, 'y = x² − 1', { cls: 'c1 it', dx: 30 });
+  const L = [g.text(-1.62, 0.55, 'L1', { cls: 'big ui red', anchor: 'middle' }), g.text(0.5, -0.5, 'L2', { cls: 'big ui red', anchor: 'middle' }), g.text(1.62, 0.55, 'L3', { cls: 'big ui red', anchor: 'middle' })];
+  return { g, f, R, L };
+}
+
+/* ---------- 04 EXAMPLE y = x^2 - 1 ---------- */
+def({
+  sec: 'Konsep luas', title: 'Contoh: y = x² − 1 pada [−2, 2]', build(r) {
+    const F = frame(r, {
+      eyebrow: eb(4, 'Contoh luas terhadap sumbu', badge('pdf', 'Contoh · hal. 4')),
+      title: `Contoh: ${m`y=x^2-1`}, garis ${m`x=-2`}, ${m`x=2`}, dan sumbu-x`,
+      lead: 'Tentukan luas daerah yang dibatasi oleh kurva, kedua garis, dan sumbu-x. Materi memberi catatan: gambar terlebih dahulu daerah yang dimaksud.',
+      cap: 'Klik salah satu daerah L1, L2, atau L3 untuk menuju pertanyaannya.'
+    });
+    const { g, R } = graphX2m1(F.gHost);
+    const P = F.panel; let stage2;
+    chain([
+      next => {
+        blk(P, `<div class="q-tag">Langkah 1 · titik potong dengan sumbu-x</div>`);
+        numq(P, {
+          q: `Kurva memotong sumbu-x saat ${m`y=0`}. Tentukan nilai <b>positif</b> ${m`x`} yang memenuhi ${m`x^2-1=0`}.`, pre: m`x=`, ans: 1, ph: 'mis. 2',
+          hint: `${m`x^2-1=0 \;\Rightarrow\; x^2=1`}. Bilangan positif berapa yang kuadratnya 1?`,
+          okFb: `${m`x^2=1\Rightarrow x=\pm1`}. Kurva memotong sumbu-x di ${m`(-1,0)`} dan ${m`(1,0)`}.`,
+          sol: `${m`x^2-1=0\Rightarrow x^2=1\Rightarrow x=\pm1`}. Kurva memotong sumbu-x di ${m`(-1,0)`} dan ${m`(1,0)`}.`,
+          onCorrect: () => { g.dot(-1, 0, { cls: 'pulse' }); g.dot(1, 0, { cls: 'pulse' }); g.text(-1, 0, '(−1, 0)', { dx: -6, dy: -10, anchor: 'end', cls: 'm' }); g.text(1, 0, '(1, 0)', { dx: 6, dy: -10, cls: 'm' }); next(); }
+        });
+      },
+      next => {
+        stage2 = E('div', { class: 'block' }); P.append(stage2);
+        stage2.append(H(`<div class="q-tag">Langkah 2 · posisi setiap subregion</div><p>Titik ${m`x=-1`} dan ${m`x=1`} membagi daerah menjadi tiga bagian. Tentukan letak setiap bagian.</p>`));
+        const spec = [['L1', m`-2\le x\le -1`, 0], ['L2', m`-1\le x\le 1`, 1], ['L3', m`1\le x\le 2`, 0]];
+        let n = 0; const qs = [];
+        spec.forEach(([name, rng, below], k) => {
+          const qq = mcq(stage2, {
+            q: `${name}: ${rng}. Daerah ini berada…`, cols: true,
+            opts: [
+              { t: 'Di atas sumbu-x', ok: !below, fb: below ? `Pada ${rng}, nilai ${m`x^2-1`} negatif (coba ${m`x=0`}: ${m`y=-1`}). Kurva di bawah sumbu-x.` : `Pada ${rng}, ${m`x^2-1\ge0`}, jadi ${m`|x^2-1|=x^2-1`}.` },
+              { t: 'Di bawah sumbu-x', ok: !!below, fb: below ? `Pada ${rng}, ${m`x^2-1\le0`}, jadi ${m`|x^2-1|=1-x^2`}.` : `Coba satu titik, misalnya ${m`x=${k === 0 ? '-1{,}5' : '1{,}5'}`}: ${m`y=1{,}25\gt 0`}. Kurva di atas sumbu-x.` }],
+            onCorrect: () => {
+              R[k].setAttribute('class', 'ar ' + (below ? 'reg2' : 'area')); n++;
+              if (n === 3) {
+                App.done('x2m1');
+                const s = blk(stage2, `<div class="fb ok"><strong>✓ LENGKAP</strong> ${m`|x^2-1| = x^2-1`} pada L1 dan L3, dan ${m`|x^2-1| = 1-x^2`} pada L2. Setiap bagian dihitung dengan integralnya sendiri.</div>`);
+                s.append(E('div', { class: 'row' }, E('button', { class: 'btn primary', type: 'button', onclick: () => App.next() }, 'LIHAT PENYELESAIAN →')));
+                typeset(s);
+              }
+            }
+          });
+          qs.push(qq);
+        });
+        typeset(stage2);
+        R.forEach((p, k) => { p.classList.add('click'); p.addEventListener('click', () => { const el = qs[k].el; el.scrollIntoView({ behavior: reduced() ? 'auto' : 'smooth', block: 'center' }); el.style.borderColor = 'var(--accent)'; setTimeout(() => el.style.borderColor = '', 1200); }); });
+        next();
+      }
+    ]);
+  }
+});
+
+/* ---------- 05 SOLUTION |x^2-1| ---------- */
+def({
+  sec: 'Konsep luas', title: 'Penyelesaian ∫|x² − 1| dx', build(r) {
+    const F = frame(r, {
+      eyebrow: eb(5, 'Penyelesaian', badge('pdf', 'Jawab · hal. 5')),
+      title: `Penyelesaian ${m`\int_{-2}^{2}|x^2-1|\,dx`}`,
+      lead: 'Setiap subregion dihitung dengan fungsi yang bernilai positif di bagian itu, lalu hasilnya dijumlahkan.',
+      cap: 'Amber: di atas sumbu-x. Cyan: di bawah sumbu-x.'
+    });
+    const { g, R, L } = graphX2m1(F.gHost);
+    R[0].setAttribute('class', 'ar area'); R[1].setAttribute('class', 'ar reg2'); R[2].setAttribute('class', 'ar area');
+    g.dot(-1, 0); g.dot(1, 0);
+    const P = F.panel;
+    const hl = ks => R.forEach((p, k) => p.classList.toggle('hl', ks.includes(k)));
+    const fix = E('div', { class: 'note fix', hidden: true, html: `<div class="row">${badge('fix', 'Koreksi terhadap materi')}</div>
+      <p>Pada slide materi (hal. 5), integral L2 dihitung sebagai ${m`\big[x-\tfrac{x^3}{3}\big]_{0}^{1}=\tfrac23`} (batas bawah 0), lalu ditulis sebagai 2, sehingga hasil akhirnya tertulis ${m`\tfrac{14}{3}`}.</p>
+      <p>Daerah L2 membentang dari ${m`x=-1`} sampai ${m`x=1`}, sehingga ${m`L2=\tfrac43`} dan luas totalnya <b>4</b>.</p>
+      <p class="small muted">Cek dengan simetri:</p>${dm`\begin{aligned}&2\Big[\int_0^1(1-x^2)\,dx+\int_1^2(x^2-1)\,dx\Big]\\&=2\big(\tfrac23+\tfrac43\big)=4\end{aligned}`}` });
+    stepper(P, [
+      { head: 'Pisahkan menurut subregion', html: dm`\int_{-2}^{2}|x^2-1|\,dx = L1+L2+L3`, on: () => hl([0, 1, 2]) },
+      { head: 'Tulis fungsi positif di tiap bagian', html: dm`\begin{aligned}&=\int_{-2}^{-1}(x^2-1)\,dx+\int_{-1}^{1}(1-x^2)\,dx\\&\quad+\int_{1}^{2}(x^2-1)\,dx\end{aligned}`, on: () => hl([1]) },
+      { head: 'Antiturunan', html: dm`\begin{aligned}&=\Big[\tfrac{x^3}{3}-x\Big]_{-2}^{-1}+\Big[x-\tfrac{x^3}{3}\Big]_{-1}^{1}\\&\quad+\Big[\tfrac{x^3}{3}-x\Big]_{1}^{2}\end{aligned}`, on: () => hl([0, 2]) },
+      { head: 'Substitusi batas', html: dm`\begin{aligned}&=\Big(\tfrac23-\big(-\tfrac23\big)\Big)+\Big(\tfrac23-\big(-\tfrac23\big)\Big)\\&\quad+\Big(\tfrac23-\big(-\tfrac23\big)\Big)\end{aligned}`, on: () => { hl([]); L[0].textContent = 'L1 = 4/3'; L[1].textContent = 'L2 = 4/3'; L[2].textContent = 'L3 = 4/3'; } },
+      { head: 'Jumlahkan', html: `${dm`=\tfrac43+\tfrac43+\tfrac43=4`}<p>Luas daerah yang dimaksud adalah <b>4 satuan luas</b>.</p>`, on: () => hl([0, 1, 2]) }
+    ], { key: 'x2m1sol', onDone: () => { fix.hidden = false; typeset(fix); } });
+    P.append(fix);
+  }
+});
+
+/* ---------- 06 BETWEEN TWO CURVES ---------- */
+def({
+  sec: 'Irisan vertikal (dx)', title: 'Luas daerah di antara dua kurva', build(r) {
+    const F = frame(r, {
+      eyebrow: eb(6, 'Irisan vertikal', badge('pdf', 'Materi hal. 6–7')),
+      title: 'Luas daerah di antara dua kurva',
+      lead: `Irisan vertikal selebar ${m`\Delta x`} dipotong dari kurva bawah ke kurva atas. Tingginya selalu ${m`f(x)-g(x)`}, termasuk ketika ${m`g(x)`} negatif.`,
+      cap: 'Geser posisi irisan dengan slider di panel.'
+    });
+    const f = x => 3 - 0.25 * (x - 2.2) ** 2, gg = x => 0.35 * (x - 1.6) ** 2 - 1, a = 0.5, b = 4, dx = 0.3;
+    const g = new Graph(F.gHost, { x: [-0.3, 5], y: [-1.5, 3.8], gx: .5, lx: 20, ly: 20 });
+    g.areaX(f, gg, a, b, { cls: 'area' });
+    g.curve(f, -0.3, 5, { cls: 'c1' }); g.curve(gg, -0.3, 5, { cls: 'c2' });
+    g.seg(a, gg(a), a, f(a), { cls: 'gd solid' }); g.seg(b, gg(b), b, f(b), { cls: 'gd solid' });
+    g.text(a, 0, 'a', { dy: 20, anchor: 'middle', cls: 'it' }); g.text(b, 0, 'b', { dy: 20, anchor: 'middle', cls: 'it' });
+    g.text(2.2, 3, 'y = f(x)', { dy: -10, anchor: 'middle', cls: 'c1 it' }); g.text(3.05, 0.35 * 1.45 ** 2 - 1, 'y = g(x)', { dy: 24, anchor: 'middle', cls: 'c2 it' });
+    g.text(3.35, 1.7, 'S', { cls: 'it big' });
+    const P = F.panel;
+    blk(P, `<p class="src">Misalkan ${m`f(x)\ge g(x)`} pada ${m`[a,b]`}. Kita ingin menentukan luas daerah yang dibatasi kurva ${m`y=f(x)`}, ${m`y=g(x)`}, garis ${m`x=a`}, dan garis ${m`x=b`}. Luas irisan ke-${m`i`} dapat ditaksir, lalu dijumlahkan dan diambil limitnya.</p>`);
+    const ctl = E('div', { class: 'block' }); P.append(ctl);
+    const ro = readout(P, [['f', 'f(xᵢ*)', 'k1'], ['g', 'g(xᵢ*)', 'k2'], ['h', 'Tinggi f − g', 'kS'], ['A', 'ΔLᵢ = tinggi·Δx', 'kS']]);
+    slider(ctl, {
+      label: `Posisi irisan ${m`x_i^*`}`, min: a + dx / 2, max: b - dx / 2, step: .05, value: 1.3, oninput: v => {
+        g.clear('slices'); g.clear('top'); g.clear('guides');
+        g.seg(a, gg(a), a, f(a), { cls: 'gd solid' }); g.seg(b, gg(b), b, f(b), { cls: 'gd solid' });
+        const fv = f(v), gv = gg(v);
+        g.rect(v - dx / 2, v + dx / 2, gv, fv, { cls: 'hot' }); g.seg(v, gv, v, fv, { cls: 'gd' });
+        g.vbrace(v - dx / 2 - 0.08, 0, fv, 'f(xᵢ*)', { side: 'left', cls: 'k1', tcls: 'c1' });
+        if (gv < 0) g.vbrace(v - dx / 2 - 0.08, gv, 0, '−g(xᵢ*)', { side: 'left', cls: 'k2', tcls: 'c2' });
+        g.vbrace(v + dx / 2 + 0.08, gv, fv, 'f(xᵢ*) − g(xᵢ*)', { cls: 'kS', tcls: 'kS' });
+        g.hbrace(Math.min(gv, 0) - 0.12, v - dx / 2, v + dx / 2, 'Δx', { cls: 'kS', tcls: 'kS' });
+        g.text(v, (fv + gv) / 2, 'ΔLᵢ', { anchor: 'middle', cls: 'sm ui', dy: 5 });
+        ro.f.textContent = fmt(fv, 3); ro.g.textContent = fmt(gv, 3); ro.h.textContent = fmt(fv - gv, 3); ro.A.textContent = fmt((fv - gv) * dx, 3);
+      }
+    });
+    blk(P, `<div class="plate big">${dm`\Delta L_i \approx \big[f(x_i^*)-g(x_i^*)\big]\,\Delta x`}${dm`L=\int_a^b \big[f(x)-g(x)\big]\,dx`}</div>`);
+    blk(P, `<div class="iti"><div><b>IRIS</b>Potong daerah menjadi irisan vertikal selebar Δx.</div><div><b>TAKSIR</b>Luas satu irisan ≈ tinggi × lebar = [f − g]Δx.</div><div><b>INTEGRALKAN</b>Jumlahkan semua irisan dan ambil limitnya.</div></div>`);
+    mcq(P, {
+      key: 'duakurva', q: `Geser irisan ke daerah tempat ${m`g(x_i^*)\lt 0`}. Berapa tinggi irisannya?`,
+      opts: [
+        { t: m`f(x_i^*)+\big|g(x_i^*)\big|`, ok: true, fb: `Karena ${m`g\lt0`}, ${m`f-g=f+(-g)=f+|g|`}. Rumus ${m`f-g`} tetap berlaku, tanda minus sudah mengurus bagian di bawah sumbu.` },
+        { t: m`f(x_i^*)-\big|g(x_i^*)\big|`, fb: 'Bagian di bawah sumbu-x juga termasuk tinggi irisan, jadi harus ditambahkan, bukan dikurangi.' },
+        { t: m`f(x_i^*)`, fb: 'Itu hanya tinggi dari sumbu-x ke kurva atas. Irisan memanjang sampai kurva bawah.' }]
+    });
+  }
+});
+
+/* ---------- 07 UPPER / LOWER CURVE ---------- */
+def({
+  sec: 'Irisan vertikal (dx)', title: 'Menentukan kurva atas dan kurva bawah', build(r) {
+    const F = frame(r, {
+      eyebrow: eb(7, 'Irisan vertikal'),
+      title: 'Menentukan kurva atas dan kurva bawah',
+      lead: 'Tinggi irisan vertikal adalah y kurva atas dikurangi y kurva bawah. Geser irisan dan bandingkan nilai kedua kurva.', bar: true,
+      cap: 'Kurva A dan B sengaja diberi warna netral sampai Anda menjawab.'
+    });
+    const g = new Graph(F.gHost, { x: [-0.12, 1.2], y: [-0.1, 1.15], gx: .25, lx: .5 });
+    const pA = g.curve(f_x, -0.12, 1.2, { cls: 'cn', key: 'A' }); const pB = g.curve(f_x2, -0.12, 1.2, { cls: 'cn dash', key: 'B' });
+    const lA = g.text(1.02, 1.1, 'A: y = x', { cls: 'cn it', anchor: 'end', dx: -10 }); const lB = g.text(0.78, 0.4, 'B: y = x²', { cls: 'cn it' });
+    toggles(F.figBar, g, [['A', 'Kurva A'], ['B', 'Kurva B']]);
+    const P = F.panel; const ctl = E('div', { class: 'block' }); P.append(ctl);
+    const ro = readout(P, [['x', 'x'], ['a', 'A: y = x'], ['b', 'B: y = x²'], ['h', 'A − B', 'kS']]);
+    slider(ctl, {
+      label: 'Posisi irisan x', min: .05, max: .95, step: .01, value: .5, oninput: v => {
+        g.clear('slices'); g.clear('marks');
+        g.rect(v - .03, v + .03, v * v, v, { cls: 'hot' }); g.dot(v, v); g.dot(v, v * v);
+        ro.x.textContent = fmt(v, 2); ro.a.textContent = fmt(v, 4); ro.b.textContent = fmt(v * v, 4); ro.h.textContent = fmt(v - v * v, 4);
+      }
+    });
+    const res = E('div', { class: 'plate', hidden: true });
+    mcq(P, {
+      key: 'atasbawah', q: 'Pada 0 < x < 1, kurva mana yang menjadi batas atas?',
+      opts: [
+        { t: 'A. y = x', ok: true, fb: `Pada ${m`0\lt x\lt1`}, ${m`x\gt x^2`}. Contoh: ${m`x=0{,}5`} memberi ${m`0{,}5\gt0{,}25`}.` },
+        { t: 'B. y = x²', fb: `Lihat kolom readout: nilai ${m`x^2`} selalu lebih kecil dari ${m`x`} pada interval ini. Mengkuadratkan bilangan antara 0 dan 1 membuatnya lebih kecil.` }],
+      hint: 'Geser slider dan bandingkan dua angka di readout. Yang lebih besar adalah kurva atas.',
+      onCorrect: () => { pA.setAttribute('class', 'cv c1'); pB.setAttribute('class', 'cv c2'); lA.setAttribute('class', 'lb c1 it'); lB.setAttribute('class', 'lb c2 it'); lA.textContent = 'y = x (atas)'; lB.textContent = 'y = x² (bawah)'; res.hidden = false; typeset(res); }
+    });
+    res.innerHTML = `<span class="lbl">Tinggi irisan vertikal</span>${dm`\text{tinggi}=y_{\text{atas}}-y_{\text{bawah}}=x-x^2`}`;
+    P.append(res);
+  }
+});
+
+/* ---------- 08 INTERSECTION ---------- */
+def({
+  sec: 'Irisan vertikal (dx)', title: 'Menentukan titik potong', build(r) {
+    const F = frame(r, {
+      eyebrow: eb(8, 'Titik potong', badge('pdf', 'Contoh Soal 1 · hal. 8')),
+      title: 'Menentukan titik potong',
+      lead: 'Dua kurva berpotongan ketika nilai y-nya sama. Absis titik potong menjadi batas integrasi.',
+      cap: 'Tekan PUTAR. Dua titik bergerak di kedua kurva; jarak vertikalnya menjadi nol di titik potong.', bar: true
+    });
+    const g = new Graph(F.gHost, { x: [-0.6, 1.5], y: [-0.45, 1.6], gx: .25, lx: .5 });
+    g.curve(f_x, -0.6, 1.5, { cls: 'c1' }); g.curve(f_x2, -0.6, 1.5, { cls: 'c2' });
+    g.text(1.28, 1.28, 'y = x', { cls: 'c1 it', dx: 8, dy: 12 }); g.text(1.18, 1.39, 'y = x²', { cls: 'c2 it', anchor: 'end', dx: -8 });
+    const found = new Set(); let running = false;
+    const markHit = x => { if (found.has(x)) return; found.add(x); g.dot(x, x, { layer: 'top', cls: 'pulse' }); g.text(x, x, x ? '(1, 1)' : '(0, 0)', { layer: 'top', dx: x ? 10 : 10, dy: x ? 20 : -10, cls: 'm' }); };
+    const play = E('button', { class: 'btn primary sm', type: 'button' }, '▶ PUTAR');
+    F.figBar.append(play);
+    play.addEventListener('click', () => {
+      if (running) return; running = true; play.disabled = true;
+      const t0 = performance.now(), dur = reduced() ? 10 : 5200; let prev = null;
+      const step = now => {
+        if (!play.isConnected) return;
+        const p = clamp((now - t0) / dur, 0, 1), t = -0.5 + 1.85 * p;
+        g.clear('marks'); g.clear('slices');
+        const gap = t - t * t;
+        g.dot(t, t, { cls: 'c1' }); g.dot(t, t * t, { cls: 'c2' });
+        g.seg(t, t * t, t, t, { cls: 'br kS', layer: 'slices' });
+        g.text(t, Math.max(t, t * t), '|x − x²| = ' + fmt(Math.abs(gap), 2), { layer: 'marks', dy: -14, anchor: 'middle', cls: 'sm ui' });
+        if (prev !== null) { if (prev < 0 && gap >= 0) markHit(0); if (prev > 0 && gap <= 0) markHit(1); }
+        prev = gap;
+        if (p < 1) requestAnimationFrame(step); else { running = false; play.disabled = false; play.textContent = '▶ PUTAR LAGI'; markHit(0); markHit(1); }
+      };
+      requestAnimationFrame(step);
+    });
+    const P = F.panel;
+    blk(P, `<ol class="flow"><li>f(x) = g(x)</li><li>Bentuk persamaan</li><li>Selesaikan</li><li>Batas x</li></ol>`);
+    numq(P, {
+      q: `Kurva ${m`y=x`} dan ${m`y=x^2`} berpotongan di ${m`x=0`} dan di ${m`x=\,?`}`, pre: m`x=`, ans: 1, ph: 'mis. 2', key: 'titikpotong',
+      hint: [`Samakan kedua persamaan: ${m`x=x^2`}.`, `Pindahkan ke satu ruas lalu faktorkan: ${m`x(x-1)=0`}.`],
+      okFb: `Titik potongnya ${m`(0,0)`} dan ${m`(1,1)`}.`, sol: `${m`x=x^2\Rightarrow x(x-1)=0\Rightarrow x=0`} atau ${m`x=1`}.`
+    });
+    blk(P, `<div class="q-tag">Intersection calculator · langkah aljabar</div>`);
+    stepper(P, [
+      { head: 'Samakan kedua persamaan', html: dm`x=x^2` },
+      { head: 'Bentuk persamaan = 0', html: dm`x^2-x=0` },
+      { head: 'Faktorkan', html: dm`x(x-1)=0` },
+      { head: 'Selesaikan', html: `${dm`x=0 \quad\text{dan}\quad x=1`}<p>Substitusi ke ${m`y=x`}: titik potong ${m`(0,0)`} dan ${m`(1,1)`}.</p>`, on: () => { markHit(0); markHit(1); } }
+    ]);
+  }
+});
+
+/* ---------- shared graph for y=x, y=x^2 ---------- */
+function graphEx1(host, neutral) {
+  const g = new Graph(host, { x: [-0.2, 1.3], y: [-0.15, 1.3], gx: .25, lx: .5, aria: 'Kurva y = x dan y = x kuadrat' });
+  const pA = g.curve(f_x, -0.2, 1.3, { cls: neutral ? 'cn' : 'c1' }), pB = g.curve(f_x2, -0.2, 1.3, { cls: neutral ? 'cn dash' : 'c2' });
+  const lA = g.text(1.12, 1.12, 'y = x', { cls: (neutral ? 'cn' : 'c1') + ' it', dx: 10, dy: 12 });
+  const lB = g.text(1.1, 1.21, 'y = x²', { cls: (neutral ? 'cn' : 'c2') + ' it', anchor: 'end', dx: -10 });
+  return { g, pA, pB, lA, lB };
+}
+
+/* ---------- 09 CONTOH SOAL 1 ---------- */
+def({
+  sec: 'Irisan vertikal (dx)', title: 'Contoh 1: y = x dan y = x²', build(r) {
+    const F = frame(r, {
+      eyebrow: eb(9, 'Contoh soal', badge('pdf', 'Contoh Soal 1 · hal. 8')),
+      title: `Contoh 1: ${m`y=x`} dan ${m`y=x^2`}`,
+      lead: `Tentukan luas daerah <i>tertutup</i> yang dibatasi oleh kurva ${m`y=x`} dan ${m`y=x^2`}.`,
+      cap: 'Grafik diperbarui pada setiap langkah yang Anda buka.'
+    });
+    const { g, pA, pB, lA, lB } = graphEx1(F.gHost, true);
+    const P = F.panel;
+    blk(P, `<p class="muted">Buka langkah secara berurutan. Coba jawab dulu dalam kepala sebelum menekan tombol berikutnya.</p>`);
+    stepper(P, [
+      { label: 'Titik potong', html: `Samakan kedua persamaan: ${m`x=x^2\Rightarrow x^2-x=0\Rightarrow x(x-1)=0`}, sehingga ${m`x=0`} dan ${m`x=1`}. Titik potong ${m`(0,0)`} dan ${m`(1,1)`}.`, on: () => { g.dot(0, 0, { cls: 'pulse' }); g.dot(1, 1, { cls: 'pulse' }); g.text(0, 0, '(0, 0)', { dx: 8, dy: 20, cls: 'm' }); g.text(1, 1, '(1, 1)', { dx: 10, dy: 18, cls: 'm' }); } },
+      { label: 'Batas integrasi', html: `Absis titik potong menjadi batas: ${m`a=0`} dan ${m`b=1`}.`, on: () => { g.vline(0, { cls: 'gd acc' }); g.vline(1, { cls: 'gd acc' }); g.text(0, 0, 'a = 0', { dy: 38, dx: 4, cls: 'acc sm ui' }); g.text(1, 0, 'b = 1', { dy: 20, anchor: 'middle', cls: 'acc sm ui' }); } },
+      { label: 'Kurva atas', html: `Kurva atas: ${m`y=x`}, karena pada ${m`0\lt x\lt1`} berlaku ${m`x\gt x^2`}.`, on: () => { pA.setAttribute('class', 'cv c1 thick'); lA.setAttribute('class', 'lb c1 it'); lA.textContent = 'y = x (atas)'; } },
+      { label: 'Kurva bawah', html: `Kurva bawah: ${m`y=x^2`}.`, on: () => { pB.setAttribute('class', 'cv c2 thick'); lB.setAttribute('class', 'lb c2 it'); lB.textContent = 'y = x² (bawah)'; } },
+      { label: 'Integral', html: `Luas irisan ${m`\Delta L_i\approx\big[x_i-x_i^2\big]\,\Delta x_i`}, jadi ${dm`L=\int_0^1\big[x-x^2\big]\,dx`}`, on: () => { g.rect(.5, .58, .54 * .54, .54, { cls: 'hot' }); g.hbrace(.54 * .54 - .06, .5, .58, 'Δx', { cls: 'kS', tcls: 'kS' }); growAreaX(g, f_x, f_x2, 0, 1, 'area', 1200); } },
+      { label: 'Hasil', html: `${dm`L=\Big[\frac{x^2}{2}-\frac{x^3}{3}\Big]_0^1=\frac12-\frac13=\frac16`}<p>Luas daerah = ${m`\tfrac16`} satuan luas.</p>`, on: () => { g.text(.36, .3, 'L = 1/6', { anchor: 'middle', cls: 'big ui', layer: 'top' }); } }
+    ], { labels: true, key: 'contoh1' });
+    numq(P, { tag: 'Coba sendiri sebelum membuka langkah 6', q: `Hitung ${m`\int_0^1 (x-x^2)\,dx`}.`, ans: 1 / 6, exact: '\\tfrac16', exactTxt: '1/6', hint: `Antiturunan ${m`x-x^2`} adalah ${m`\tfrac{x^2}{2}-\tfrac{x^3}{3}`}.`, sol: dm`\Big[\tfrac{x^2}{2}-\tfrac{x^3}{3}\Big]_0^1=\tfrac12-\tfrac13=\tfrac16`, okFb: 'Hasilnya sama dengan materi.' });
+  }
+});
+
+/* ---------- 10 INTEGRAL BUILDER ---------- */
+def({
+  sec: 'Irisan vertikal (dx)', title: 'Membangun integral dari grafik', build(r) {
+    const F = frame(r, {
+      eyebrow: eb(10, 'Integral builder'),
+      title: 'Membangun integral dari grafik',
+      lead: 'Integral luas dibangun dari informasi pada grafik: batas dari titik potong, integran dari kurva atas dikurangi kurva bawah. Pilih setiap bagian, lalu tekan HITUNG.',
+      cap: 'Daerah yang diarsir mengikuti pilihan Anda. Warna merah menandai bagian dengan tinggi irisan negatif (fungsi atas < fungsi bawah).'
+    });
+    const { g } = graphEx1(F.gHost, false);
+    g.dot(0, 0); g.dot(1, 1);
+    const FN = { x: { tex: 'x', txt: 'x', c: [0, 1], f: f_x }, x2: { tex: 'x^2', txt: 'x²', c: [0, 0, 1], f: f_x2 }, z: { tex: '0', txt: '0 (sumbu x)', c: [0], f: () => 0 } };
+    const P = F.panel;
+    const mkSel = (label, opts, val) => { const id = uid('sel'); const s = E('select', { id }); opts.forEach(([v, t]) => s.append(E('option', { value: v, selected: v === val }, t))); return [E('label', { class: 'field', for: id }, label, s), s]; };
+    const lims = [['-1', '−1'], ['0', '0'], ['1', '1'], ['2', '2']];
+    const fns = [['x', 'x'], ['x2', 'x²'], ['z', '0 (sumbu x)']];
+    const [l1, sLo] = mkSel('BATAS BAWAH', lims, '-1'), [l2, sHi] = mkSel('BATAS ATAS', lims, '1'), [l3, sT] = mkSel('FUNGSI ATAS', fns, 'x2'), [l4, sB] = mkSel('FUNGSI BAWAH', fns, 'x');
+    P.append(E('div', { class: 'field-grid' }, l1, l2, l3, l4));
+    const live = E('div', { class: 'plate big' }); P.append(live);
+    const hit = E('button', { class: 'btn primary', type: 'button' }, 'HITUNG');
+    P.append(E('div', { class: 'row' }, hit));
+    const fb = E('div', { class: 'fb', hidden: true, 'aria-live': 'polite' }); P.append(fb);
+    const sol = E('div', { class: 'plate', hidden: true }); P.append(sol);
+    const state = () => ({ lo: +sLo.value, hi: +sHi.value, T: FN[sT.value], B: FN[sB.value], tk: sT.value, bk: sB.value });
+    const upd = () => {
+      const s = state(); fb.hidden = true; sol.hidden = true;
+      const bt = s.bk === 'z' ? '0' : s.B.tex;
+      setMath(live, `<span class="lbl">Integral yang terbentuk</span>${dm`A=\int_{${s.lo}}^{${s.hi}}\big(${s.T.tex}-${bt}\big)\,dx`}`);
+      g.clear('area'); g.clear('guides'); g.clear('slices');
+      g.vline(s.lo, { cls: 'gd acc' }); g.vline(s.hi, { cls: 'gd acc' });
+      if (s.lo < s.hi && s.tk !== s.bk) {
+        g.areaX(x => Math.max(s.T.f(x), s.B.f(x)), s.B.f, s.lo, s.hi, { cls: 'area' });
+        g.areaX(s.B.f, x => Math.min(s.T.f(x), s.B.f(x)), s.lo, s.hi, { cls: 'bad' });
+        const xs = s.lo + (s.hi - s.lo) * 0.62; g.rect(xs - .03, xs + .03, s.B.f(xs), s.T.f(xs), { cls: 'hot' });
+      }
+    };
+    [sLo, sHi, sT, sB].forEach(s => s.addEventListener('change', upd));
+    hit.addEventListener('click', () => {
+      const s = state(); const val = s.lo < s.hi && s.tk !== s.bk ? polyInt(s.T.c.map((c, k) => c - (s.B.c[k] || 0)).concat(s.B.c.slice(s.T.c.length).map(c => -c)), s.lo, s.hi) : null;
+      const vtxt = val ? ` Integral yang Anda bangun bernilai ${m`${val.tex()}`}.` : '';
+      if (s.lo >= s.hi) return setFb(fb, 'bad', 'Batas bawah harus lebih kecil dari batas atas.');
+      if (s.tk === s.bk) return setFb(fb, 'bad', 'Fungsi atas dan fungsi bawah sama, sehingga tinggi irisan menjadi 0. Periksa kembali kurva atas dan kurva bawah.');
+      if (!(s.lo === 0 && s.hi === 1)) return setFb(fb, 'bad', `Batas integrasi harus berasal dari titik potong kedua kurva, yaitu ${m`x=0`} dan ${m`x=1`}.` + vtxt);
+      if (s.tk === 'z' || s.bk === 'z') return setFb(fb, 'bad', 'Periksa kembali kurva atas dan kurva bawah. Sumbu x bukan batas daerah ini; daerahnya dibatasi oleh y = x dan y = x².' + vtxt);
+      if (s.tk === 'x2') return setFb(fb, 'bad', 'Periksa kembali kurva atas dan kurva bawah.' + vtxt + ' Hasil negatif menandakan urutannya terbalik.');
+      setFb(fb, 'ok', `Tepat. Tinggi irisan vertikal adalah ${m`x-x^2`}.`);
+      sol.hidden = false; setMath(sol, dm`\begin{aligned}A&=\int_0^1\big(x-x^2\big)\,dx=\Big[\frac{x^2}{2}-\frac{x^3}{3}\Big]_0^1\\&=\frac12-\frac13=\frac16\end{aligned}`);
+      App.done('builder');
+    });
+    upd();
+  }
+});
+
+/* ---------- 11 SLICES TO TOTAL AREA ---------- */
+def({
+  sec: 'Irisan vertikal (dx)', title: 'Dari irisan ke luas total', build(r) {
+    const F = frame(r, {
+      eyebrow: eb(11, 'Irisan → luas'),
+      title: 'Dari irisan ke luas total',
+      lead: `Satu irisan memberi taksiran kasar. Semakin banyak irisan, jumlah luasnya semakin dekat ke ${m`\tfrac16`}. Pada limitnya, jumlah itu menjadi integral.`, bar: true,
+      cap: `Irisan diambil di titik tengah setiap subinterval, antara ${m`y=x^2`} dan ${m`y=x`}.`
+    });
+    const { g } = graphEx1(F.gHost, false);
+    const P = F.panel;
+    const ro = readout(P, [['n', 'Jumlah irisan'], ['s', 'Σ [f − g]Δx', 'kS'], ['e', 'Luas eksak', 'kA'], ['d', 'Selisih']]);
+    const fx = E('div', { class: 'plate big' }); P.append(fx);
+    const ns = [1, 10, 50, 100, 0];
+    const draw = n => {
+      g.clear('slices'); g.clear('area');
+      if (n) {
+        g.areaX(f_x, f_x2, 0, 1, { cls: 'q' });
+        for (let i = 0; i < n; i++) { const x0 = i / n, xm = (i + .5) / n; g.rect(x0, x0 + 1 / n, xm * xm, xm, { cls: n >= 50 ? 'thin' : '' }); }
+        const s = 1 / 6 + 1 / (12 * n * n);
+        ro.n.textContent = n; ro.s.textContent = fmt(s, 6); ro.d.textContent = fmt(s - 1 / 6, 6);
+        setMath(fx, `<span class="lbl">Taksiran dengan ${n} irisan</span>${dm`\Delta A\approx\big[f(x)-g(x)\big]\,\Delta x \qquad A\approx\sum_{i=1}^{${n}}\big[x_i-x_i^2\big]\,\Delta x`}`);
+      } else {
+        growAreaX(g, f_x, f_x2, 0, 1, 'area', 900);
+        ro.n.textContent = '∞'; ro.s.textContent = '1/6'; ro.d.textContent = '0';
+        setMath(fx, `<span class="lbl">Limit: integral tentu</span>${dm`A=\int_a^b\big[f(x)-g(x)\big]\,dx=\int_0^1\big[x-x^2\big]\,dx=\frac16`}`);
+        App.done('irisanluas');
+      }
+      ro.e.textContent = '1/6 ≈ 0,166667';
+    };
+    const sg = seg(F.figBar, ['n = 1', 'n = 10', 'n = 50', 'n = 100', '∫'], i => draw(ns[i]), 0, 'Jumlah irisan');
+    const play = E('button', { class: 'btn primary sm', type: 'button' }, '▶ PUTAR ANIMASI'); F.figBar.append(play);
+    play.addEventListener('click', () => { play.disabled = true; let k = 0; const tick = () => { if (!play.isConnected) return; sg.set(k); k++; if (k < ns.length) setTimeout(tick, 1300); else play.disabled = false; }; tick(); });
+  }
+});
+
+/* ---------- 12 CONTOH SOAL 3 ---------- */
+def({
+  sec: 'Irisan vertikal (dx)', title: 'Contoh 3: y = x² dan y = 2x − x²', build(r) {
+    const F = frame(r, {
+      eyebrow: eb(12, 'Contoh soal · coba dulu', badge('pdf', 'Contoh Soal 3 · hal. 15')),
+      title: `Contoh 3: ${m`y=x^2`} dan ${m`y=2x-x^2`}`,
+      lead: 'Hitung luas daerah yang dibatasi oleh kedua parabola. Kerjakan setiap tahap sendiri; penyelesaian materi terbuka setelah Anda menjawab.', bar: true,
+      cap: 'Kedua kurva netral sampai Anda menentukan kurva atas.'
+    });
+    const f1 = f_x2, f2 = x => 2 * x - x * x;
+    const g = new Graph(F.gHost, { x: [-0.45, 2.25], y: [-0.45, 1.5], gx: .25, lx: .5 });
+    const p1 = g.curve(f1, -0.45, 2.25, { cls: 'cn dash', key: 'p1' }), p2 = g.curve(f2, -0.45, 2.25, { cls: 'cn', key: 'p2' });
+    const l1 = g.text(-0.3, 0.3, 'y = x²', { cls: 'cn it' }), l2 = g.text(1.55, 0.95, 'y = 2x − x²', { cls: 'cn it' });
+    toggles(F.figBar, g, [['p1', 'y = x²'], ['p2', 'y = 2x − x²']]);
+    const P = F.panel;
+    chain([
+      next => mcq(P, {
+        tag: 'Tahap 1 · titik potong', q: 'Di titik mana kedua parabola berpotongan?',
+        opts: [
+          { t: `${m`(0,0)`} dan ${m`(1,1)`}`, ok: true, fb: `${m`x^2=2x-x^2\Rightarrow 2x^2-2x=0\Rightarrow 2x(x-1)=0`}, jadi ${m`x=0`} atau ${m`x=1`}.` },
+          { t: `${m`(0,0)`} dan ${m`(2,0)`}`, fb: `${m`(2,0)`} ada di ${m`y=2x-x^2`}, tetapi di ${m`y=x^2`} nilai ${m`x=2`} memberi ${m`y=4`}. Samakan kedua persamaan.` },
+          { t: `${m`(-1,1)`} dan ${m`(1,1)`}`, fb: `Titik ${m`(-1,1)`} tidak terletak di ${m`y=2x-x^2`} (nilainya ${m`-3`}).` }],
+        hint: `Samakan: ${m`x^2=2x-x^2`}.`,
+        onCorrect: () => { g.dot(0, 0, { cls: 'pulse' }); g.dot(1, 1, { cls: 'pulse' }); g.text(0, 0, '(0, 0)', { dx: 8, dy: 20, cls: 'm' }); g.text(1, 1, '(1, 1)', { dx: 8, dy: -10, cls: 'm' }); next(); }
+      }),
+      next => mcq(P, {
+        tag: 'Tahap 2 · kurva atas', q: `Pada ${m`0\lt x\lt 1`}, kurva mana yang menjadi batas atas ${m`y_T`}?`,
+        opts: [
+          { t: m`y_T=2x-x^2`, ok: true, fb: `Uji ${m`x=0{,}5`}: ${m`2x-x^2=0{,}75`} dan ${m`x^2=0{,}25`}. Jadi ${m`y_T=2x-x^2`} dan ${m`y_B=x^2`}.` },
+          { t: m`y_T=x^2`, fb: `Uji ${m`x=0{,}5`}: ${m`x^2=0{,}25`} sedangkan ${m`2x-x^2=0{,}75`}.` }],
+        onCorrect: () => { p2.setAttribute('class', 'cv c1'); p1.setAttribute('class', 'cv c2'); l2.setAttribute('class', 'lb c1 it'); l1.setAttribute('class', 'lb c2 it'); svgText(l2, 'y_T = 2x − x²'); svgText(l1, 'y_B = x²'); g.rect(.37, .43, .16, .8 - .16, { cls: 'hot' }); g.hbrace(.1, .37, .43, 'Δx', { cls: 'kS', tcls: 'kS' }); next(); }
+      }),
+      next => numq(P, {
+        tag: 'Tahap 3 · luas', q: `Hitung luas daerahnya: ${m`A=\int_0^1\big(y_T-y_B\big)\,dx`}.`, pre: m`A=`, ans: 1 / 3, exact: '\\tfrac13', exactTxt: '1/3', key: 'contoh3',
+        hint: [`${m`y_T-y_B=2x-2x^2=2(x-x^2)`}.`, `Bandingkan dengan Contoh 1: ${m`\int_0^1(x-x^2)\,dx=\tfrac16`}.`],
+        okFb: `${m`A=2\cdot\tfrac16=\tfrac13`}.`, sol: `${m`A=\int_0^1(2x-2x^2)\,dx=\tfrac13`}.`,
+        onCorrect: () => { growAreaX(g, f2, f1, 0, 1, 'area', 1100); next(); }
+      }),
+      next => {
+        blk(P, `<div class="q-tag">Penyelesaian materi</div>`);
+        stepper(P, [
+          { head: 'Titik potong', html: `${m`x^2=2x-x^2\;\Rightarrow\;2x^2-2x=0\;\Rightarrow\;2x(x-1)=0`}, sehingga ${m`x=0`} atau ${m`1`}. Titik potong ${m`(0,0)`} dan ${m`(1,1)`}.` },
+          { head: 'Batas atas dan bawah', html: dm`y_T=2x-x^2 \qquad y_B=x^2` },
+          { head: 'Luas satu persegi panjang', html: `${dm`(y_T-y_B)\,\Delta x=(2x-x^2-x^2)\,\Delta x`}Daerah terletak antara ${m`x=0`} dan ${m`x=1`}.` },
+          { head: 'Luas total', html: dm`\begin{aligned}A&=\int_0^1(2x-2x^2)\,dx=2\int_0^1(x-x^2)\,dx\\&=2\Big[\frac{x^2}{2}-\frac{x^3}{3}\Big]_0^1=\frac13\end{aligned}` }
+        ], { onDone: () => { const n = blk(P, `<div class="note cmp"><b>Hubungan dengan Contoh 1.</b> ${m`\int_0^1(x-x^2)\,dx`} adalah integral Contoh Soal 1, bernilai ${m`\tfrac16`}. Luas di sini tepat dua kali lipatnya.</div>`); typeset(n); } });
+        typeset(P); next();
+      }
+    ]);
+  }
+});
+
+/* ---------- shared: x^2, -x+2, x-axis ---------- */
+const topX = x => Math.min(x * x, 2 - x);
+function graphEx2(host, o = {}) {
+  const g = new Graph(host, Object.assign({ x: [-0.45, 2.6], y: [-0.4, 2.3], gx: .25, lx: .5, aria: 'Daerah di bawah y = x kuadrat dan y = -x + 2, di atas sumbu x' }, o));
+  const [x0, x1] = g.o.x;
+  g.curve(f_x2, x0, x1, { cls: 'c2', key: 'par' }); g.curve(x => 2 - x, x0, x1, { cls: 'c1', key: 'lin' });
+  return g;
+}
+
+/* ---------- 13 ONE OR SEVERAL INTEGRALS ---------- */
+def({
+  sec: 'Pembagian region', title: 'Satu integral atau beberapa integral?', build(r) {
+    const F = frame(r, {
+      eyebrow: eb(13, 'Pembagian region', badge('pdf', 'Contoh Soal 2 · hal. 9')),
+      title: 'Satu integral atau beberapa integral?',
+      lead: `Hitung luas daerah yang dibatasi oleh sumbu x, ${m`y=x^2`}, dan ${m`y=-x+2`}. Sebelum menghitung, periksa apakah satu pasangan batas atas–bawah berlaku di seluruh interval.`,
+      cap: 'Geser irisan vertikal dari kiri ke kanan dan perhatikan label batas atasnya.'
+    });
+    const g = new Graph(F.gHost, { x: [-2.5, 2.8], y: [-0.6, 4.6], gx: .5, lx: 1 });
+    g.areaX(topX, () => 0, 0, 2, { cls: 'area' });
+    g.curve(f_x2, -2.5, 2.8, { cls: 'c2' }); g.curve(x => 2 - x, -2.5, 2.8, { cls: 'c1' });
+    g.text(-2.05, 4.3, 'y = x²', { cls: 'c2 it', anchor: 'end', dx: -6 }); g.text(2.35, -0.35, 'y = −x + 2', { cls: 'c1 it', anchor: 'end', dy: 4 });
+    g.dot(-2, 4); g.text(-2, 4, '(−2, 4)', { dx: 10, dy: 4, cls: 'm' }); g.dot(1, 1); g.text(1, 1, '(1, 1)', { dx: 10, dy: -6, cls: 'm' });
+    const P = F.panel; const ctl = E('div', { class: 'block' }); P.append(ctl);
+    const ro = readout(P, [['x', 'Posisi x'], ['t', 'Batas atas'], ['b', 'Batas bawah']]);
+    slider(ctl, {
+      label: 'Posisi irisan vertikal x', min: .04, max: 1.96, step: .02, value: .5, oninput: v => {
+        g.clear('slices'); g.clear('top'); const t = topX(v); const par = v < 1;
+        g.rect(v - .04, v + .04, 0, t, { cls: 'hot' });
+        g.text(v, t, par ? 'atas: y = x²' : 'atas: y = −x + 2', { layer: 'top', dy: -10, anchor: 'middle', cls: (par ? 'c2' : 'c1') + ' sm ui' });
+        ro.x.textContent = fmt(v, 2); ro.t.textContent = par ? 'y = x²' : 'y = −x + 2'; ro.t.className = par ? 'k2' : 'k1'; ro.b.textContent = 'y = 0 (sumbu x)';
+      }
+    });
+    blk(P, `<div class="plate"><span class="lbl">Titik potong kedua kurva · materi</span>${dm`x^2=-x+2\;\rightarrow\;x^2+x-2=0`}${dm`\rightarrow\;(x+2)(x-1)=0\;\rightarrow\;x=-2,\;x=1`}</div>`);
+    blk(P, `<p class="small muted">Titik ${m`(-2,4)`} juga titik potong kedua kurva, tetapi daerah yang dimaksud berada di atas sumbu x dan di bawah kedua kurva, yaitu pada ${m`0\le x\le2`}. Jadi ${m`x=-2`} bukan batas daerah ini.</p>`);
+    mcq(P, {
+      key: 'bagi', q: 'Apakah satu fungsi atas–bawah berlaku untuk seluruh interval 0 ≤ x ≤ 2?', cols: true,
+      opts: [
+        { t: 'YA', fb: 'Geser irisan melewati x = 1. Label batas atasnya berubah dari y = x² menjadi y = −x + 2.' },
+        { t: 'TIDAK', ok: true, fb: `Batas atas berubah di ${m`x=1`}: ${m`y=x^2`} untuk ${m`0\le x\le1`} dan ${m`y=-x+2`} untuk ${m`1\le x\le2`}. Dengan irisan vertikal, daerah harus dibagi menjadi 2 subregion.` }],
+      onCorrect: () => { g.vline(1, { cls: 'gd acc' }); g.text(1, 0, 'x = 1', { dy: 20, dx: 4, cls: 'acc sm ui' }); }
+    });
+  }
+});
+</script>
+
+<script>
+'use strict';
+/* =========================================================
+   SLIDES 14–26
+   ========================================================= */
+
+/* ---------- 14 REGION SPLIT (dx) ---------- */
+def({
+  sec: 'Pembagian region', title: 'Region dibagi menjadi dua subregion', build(r) {
+    const F = frame(r, {
+      eyebrow: eb(14, 'Pembagian region', badge('pdf', 'Contoh Soal 2 · hal. 9–10')),
+      title: 'Region dibagi menjadi dua subregion',
+      lead: `Dengan irisan persegi panjang vertikal, daerah dibagi di ${m`x=1`}. Setiap subregion punya satu batas atas sendiri, dan luasnya dijumlahkan.`,
+      cap: 'Daerah I (abu-abu) dan Daerah II (cyan), seperti pada materi.'
+    });
+    const g = graphEx2(F.gHost);
+    const r1 = g.areaX(f_x2, () => 0, 0, 1, { cls: 'regG' }), r2 = g.areaX(x => 2 - x, () => 0, 1, 2, { cls: 'reg2' });
+    g.seg(1, 0, 1, 1, { cls: 'gd solid' }); g.dot(1, 1);
+    g.rect(.52, .64, 0, .58 * .58, { cls: 'g1' }); g.rect(1.42, 1.54, 0, 2 - 1.48, { cls: 'g2' });
+    g.hbrace(-.06, .52, .64, 'Δx', { cls: 'kS', tcls: 'kS' }); g.hbrace(-.06, 1.42, 1.54, 'Δx', { cls: 'kS', tcls: 'kS' });
+    g.text(.8, .2, 'I', { cls: 'big ui', anchor: 'middle' }); g.text(1.25, .32, 'II', { cls: 'big ui', anchor: 'middle' });
+    g.text(1.38, 2.1, 'y = x²', { cls: 'c2 it', anchor: 'end', dx: -8 }); g.text(1.72, .55, 'y = −x + 2', { cls: 'c1 it' });
+    const tot = g.text(1, 1.6, '', { anchor: 'middle', cls: 'big ui', layer: 'top' });
+    const P = F.panel;
+    blk(P, `<div class="plate"><span class="lbl">Taksiran luas irisan · materi</span><p>Luas Daerah I: ${m`\Delta A_1\approx x^2\,\Delta x`}</p><p>Luas Daerah II: ${m`\Delta A_2\approx(-x+2)\,\Delta x`}</p></div>`);
+    numq(P, {
+      tag: 'Coba dulu', q: `Hitung ${m`A_2=\int_1^2(-x+2)\,dx`}.`, pre: m`A_2=`, ans: .5, exact: '\\tfrac12', exactTxt: '1/2',
+      hint: ['Antiturunan −x + 2 adalah −½x² + 2x.', 'Cek geometri: Daerah II adalah segitiga dengan alas 1 dan tinggi 1.'],
+      okFb: 'Cocok dengan luas segitiga ½ · 1 · 1.', sol: dm`A_2=\Big[-\tfrac12x^2+2x\Big]_1^2=\tfrac12`
+    });
+    const cls = (a, b) => { r1.setAttribute('class', 'ar regG ' + a); r2.setAttribute('class', 'ar reg2 ' + b); };
+    stepper(P, [
+      { head: 'Luas Daerah I', html: dm`A_1=\int_0^1 x^2\,dx=\tfrac13x^3\Big|_0^1=\frac13`, on: () => cls('hl', 'dim') },
+      { head: 'Luas Daerah II', html: `${dm`A_2=\int_1^2(-x+2)\,dx=-\tfrac12x^2+2x\Big|_1^2`}${dm`=(-2+4)-\big(-\tfrac12+2\big)=\frac12`}`, on: () => cls('dim', 'hl') },
+      { head: 'Luas total', html: `${dm`A=A_1+A_2=\frac13+\frac12=\frac56`}`, on: () => { cls('', ''); tot.textContent = 'A = 5/6'; } }
+    ], { key: 'split' });
+  }
+});
+
+/* ---------- 15 dx vs dy ---------- */
+def({
+  sec: 'Irisan horizontal (dy)', title: 'Kapan irisan horizontal lebih sesuai?', build(r) {
+    const F = frame(r, {
+      eyebrow: eb(15, 'Irisan horizontal'),
+      title: 'Kapan irisan horizontal lebih sesuai?',
+      lead: 'Tidak semua daerah paling mudah dihitung dengan dx. Daerah yang sama bisa diiris ke dua arah; pilih arah yang membuat batas irisannya tetap.', bar: true,
+      cap: `Daerah dari Contoh Soal 2: sumbu x, ${m`y=x^2`}, dan ${m`y=-x+2`}.`
+    });
+    const g = graphEx2(F.gHost);
+    g.areaX(topX, () => 0, 0, 2, { cls: 'area' }); g.dot(1, 1);
+    const P = F.panel; const out = E('div', { class: 'plate' }); const ctl = E('div', { class: 'block' });
+    let mode = 0, t = .3;
+    const draw = () => {
+      g.clear('slices'); g.clear('top'); g.clear('guides');
+      if (mode === 0) {
+        for (let k = 0; k < 8; k++) { const x0 = k * .25, xm = x0 + .125; g.rect(x0 + .02, x0 + .23, 0, topX(xm), { cls: xm < 1 ? 'g1' : 'g2' }); }
+        const xs = clamp(2 * t, .05, 1.95); g.rect(xs - .04, xs + .04, 0, topX(xs), { cls: 'hot' });
+        g.vline(1, { cls: 'gd acc' });
+        g.text(xs, topX(xs), xs < 1 ? 'atas: y = x²' : 'atas: y = −x + 2', { layer: 'top', dy: -10, anchor: 'middle', cls: (xs < 1 ? 'c2' : 'c1') + ' sm ui' });
+        setMath(out, `<span class="lbl">dx · irisan vertikal → 2 integral</span>${dm`A=\int_0^1 x^2\,dx+\int_1^2(-x+2)\,dx`}<p>Batas atas berubah di ${m`x=1`}, jadi daerah harus dibagi.</p>`);
+      } else {
+        for (let k = 0; k < 6; k++) { const y0 = k / 6, ym = y0 + 1 / 12; g.rect(Math.sqrt(ym), 2 - ym, y0 + .015, y0 + 1 / 6 - .015, { cls: 'g2' }); }
+        const ys = clamp(t, .03, .97); g.rect(Math.sqrt(ys), 2 - ys, ys - .03, ys + .03, { cls: 'hot' });
+        g.text(Math.sqrt(ys), ys, 'x = √y', { layer: 'top', dx: -8, dy: 5, anchor: 'end', cls: 'c2 sm ui' });
+        g.text(2 - ys, ys, 'x = 2 − y', { layer: 'top', dx: 8, dy: 5, cls: 'c1 sm ui' });
+        setMath(out, `<span class="lbl">dy · irisan horizontal → 1 integral</span>${dm`A=\int_0^1\big[(2-y)-\sqrt{y}\,\big]\,dy`}<p>Kiri selalu ${m`x=\sqrt y`}, kanan selalu ${m`x=2-y`} untuk seluruh ${m`0\le y\le1`}.</p>`);
+      }
+    };
+    seg(F.figBar, ['[dx] irisan vertikal', '[dy] irisan horizontal'], i => { mode = i; draw(); }, 0, 'Arah irisan');
+    P.append(ctl, out);
+    slider(ctl, { label: 'Geser irisan yang disorot', min: 0, max: 1, step: .01, value: .3, fmt: v => Math.round(v * 100) + '%', oninput: v => { t = v; draw(); } });
+    mcq(P, {
+      key: 'dxdy', q: 'Untuk daerah ini, arah irisan mana yang cukup dengan SATU integral?', cols: true,
+      opts: [
+        { t: 'dx (vertikal)', fb: 'Dengan dx, batas atas berganti di x = 1, sehingga perlu dua integral.' },
+        { t: 'dy (horizontal)', ok: true, fb: 'Setiap irisan horizontal selalu dimulai di x = √y dan berakhir di x = 2 − y. Satu integral cukup.' }]
+    });
+  }
+});
+
+/* ---------- 16 HORIZONTAL SLICE ---------- */
+def({
+  sec: 'Irisan horizontal (dy)', title: 'Luas dengan irisan horizontal', build(r) {
+    const F = frame(r, {
+      eyebrow: eb(16, 'Irisan horizontal', badge('pdf', 'Materi hal. 11')),
+      title: 'Luas dengan irisan horizontal',
+      lead: `Irisan horizontal setebal ${m`\Delta y`} membentang dari kurva kiri ke kurva kanan. Panjangnya ${m`x_R-x_L`}.`,
+      cap: 'Luas Daerah D = ? Geser irisan dengan slider di panel.'
+    });
+    const fR = y => 4.2 - 0.2 * (y - 2.6) ** 2, gL = y => 1.2 + 0.25 * (y - 2.2) ** 2, c = 1, d = 4, dy = .25;
+    const g = new Graph(F.gHost, { x: [-0.2, 5], y: [-0.2, 5], gx: .5, lx: 20, ly: 20 });
+    g.areaY(fR, gL, c, d, { cls: 'area' });
+    g.curveY(gL, .55, 4.6, { cls: 'c2' }); g.curveY(fR, .55, 4.6, { cls: 'c1' });
+    [[c, 'c', 'y = c', 18], [d, 'd', 'y = d', -8]].forEach(([yy, nm, lab, off]) => {
+      g.seg(0, yy, gL(yy), yy, { cls: 'gd' }); g.seg(gL(yy), yy, fR(yy), yy, { cls: 'gd solid' });
+      g.text(0, yy, nm, { dx: -9, dy: 5, anchor: 'end', cls: 'it' }); g.text((gL(yy) + fR(yy)) / 2, yy, lab, { dy: off, anchor: 'middle', cls: 'it sm' });
+    });
+    g.text(gL(3.3), 3.3, 'x = g(y)', { dx: -10, anchor: 'end', cls: 'c2 it' }); g.text(fR(2.0), 2.0, 'x = f(y)', { dx: 10, cls: 'c1 it' });
+    g.text(2.6, 3.6, 'D', { cls: 'big red ui' });
+    const P = F.panel; const ctl = E('div', { class: 'block' }); P.append(ctl);
+    const ro = readout(P, [['y', 'y'], ['l', 'x<sub>L</sub> = g(y)', 'k2'], ['r', 'x<sub>R</sub> = f(y)', 'k1'], ['p', 'Panjang f − g', 'kS'], ['a', 'ΔA', 'kS']]);
+    slider(ctl, {
+      label: 'Posisi irisan y', min: c + dy / 2, max: d - dy / 2, step: .05, value: 2.8, oninput: y => {
+        g.clear('slices'); g.clear('top'); const L = gL(y), R = fR(y);
+        g.rect(L, R, y - dy / 2, y + dy / 2, { cls: 'hot' }); g.seg(L, y, R, y, { cls: 'gd', layer: 'slices' });
+        g.hbrace(y - dy / 2 - .1, L, R, 'f(y) − g(y)', { cls: 'kS', tcls: 'kS' });
+        g.vbrace(R + .12, y - dy / 2, y + dy / 2, 'Δy', { cls: 'kS', tcls: 'kS' });
+        ro.y.textContent = fmt(y, 2); ro.l.textContent = fmt(L, 3); ro.r.textContent = fmt(R, 3); ro.p.textContent = fmt(R - L, 3); ro.a.textContent = fmt((R - L) * dy, 3);
+      }
+    });
+    blk(P, `<ol class="vflow">
+      <li><span>Bagi D menjadi ${m`n`} bagian. Luas setiap bagian didekati dengan luas persegi panjang dengan panjang alas ${m`f(y)-g(y)`} dan lebar ${m`\Delta y`}: ${m`\Delta A\approx\big(f(y)-g(y)\big)\Delta y`}.</span></li>
+      <li><span>Luas D didekati dengan jumlah luas persegi panjang. Jika ${m`\Delta y\to0`}, luas D adalah integral berikut.</span></li></ol>`);
+    blk(P, `<div class="plate big">${dm`\begin{aligned}A&=\int_c^d\big(f(y)-g(y)\big)\,dy\\&=\int_c^d\big(x_R-x_L\big)\,dy\end{aligned}`}<p class="small muted">${m`f(y)=x_R`} kurva kanan, ${m`g(y)=x_L`} kurva kiri. Batas ${m`c`} dan ${m`d`} adalah nilai ${m`y`}.</p></div>`);
+    mcq(P, {
+      key: 'horiz', q: 'Pada irisan horizontal, panjang persegi panjang adalah…',
+      opts: [
+        { t: m`x_R-x_L`, ok: true, fb: `Irisan horizontal diukur dari ujung kiri ke ujung kanan pada ketinggian ${m`y`} yang sama.` },
+        { t: m`y_{\text{atas}}-y_{\text{bawah}}`, fb: 'Itu tinggi irisan vertikal (dx). Irisan horizontal diukur ke arah x.' },
+        { t: m`\Delta y`, fb: `${m`\Delta y`} adalah lebar (tebal) irisan, bukan panjangnya.` }]
+    });
+  }
+});
+
+/* ---------- 17 x = f(y) ---------- */
+def({
+  sec: 'Irisan horizontal (dy)', title: 'Membentuk x = f(y)', build(r) {
+    const F = frame(r, {
+      eyebrow: eb(17, 'Irisan horizontal', badge('pdf', 'Contoh Soal 1 (dy) · hal. 12')),
+      title: `Membentuk ${m`x=f(y)`}`,
+      lead: `Irisan horizontal berada pada ketinggian ${m`y`} tertentu. Untuk mengetahui ujung kiri dan kanannya, setiap kurva harus ditulis sebagai ${m`x`} dalam ${m`y`}.`,
+      cap: `Contoh: daerah di bawah ${m`y=x^2`} dan ${m`y=-x+2`}, di atas sumbu x.`
+    });
+    const g = new Graph(F.gHost, { x: [-1.7, 2.6], y: [-0.5, 2.7], gx: .5, lx: 1 });
+    g.areaY(y => 2 - y, Math.sqrt, 0, 1, { cls: 'area' });
+    const pR = g.curveY(Math.sqrt, 0, 2.7, { cls: 'c2' }), pL = g.curveY(y => -Math.sqrt(y), 0, 2.7, { cls: 'c2' }), pLin = g.curve(x => 2 - x, -0.7, 2.6, { cls: 'c1' });
+    const lR = g.text(1.55, 2.4, 'y = x²', { dx: 10, cls: 'c2 it' }), lLin = g.text(-.35, 2.35, 'y = −x + 2', { dx: 10, cls: 'c1 it' });
+    const lL = g.text(-1.55, 2.4, '', { dx: -8, anchor: 'end', cls: 'c2 it' });
+    g.rect(Math.sqrt(.5), 1.5, .45, .55, { cls: 'hot' }); g.dot(1, 1);
+    const P = F.panel;
+    stepper(P, [
+      { head: 'Mengapa diubah?', html: `Pada irisan horizontal, ${m`y`} tetap dan yang kita cari adalah ${m`x`} di ujung kiri dan kanan. Karena itu persamaan harus berbentuk ${m`x=\ldots`} (fungsi dari ${m`y`}).` },
+      { head: 'Parabola', html: dm`y=x^2\;\Rightarrow\;x^2=y\;\Rightarrow\;x=\pm\sqrt{y}`, on: () => { pL.setAttribute('class', 'cv c2 faint'); lL.textContent = 'x = −√y'; lR.textContent = 'x = ±√y'; } },
+      { head: 'Pilih cabang yang membatasi daerah', html: `Daerah berada di ${m`x\ge0`}, jadi yang dipakai adalah ${dm`x=\sqrt{y}\quad(\text{kurva kiri},\,x_L)`}`, on: () => { pR.setAttribute('class', 'cv c2 thick'); lR.textContent = 'x = √y'; } },
+      { head: 'Garis', html: `${dm`y=-x+2\;\Rightarrow\;x=2-y\quad(\text{kurva kanan},\,x_R)`}`, on: () => { pLin.setAttribute('class', 'cv c1 thick'); lLin.textContent = 'x = 2 − y'; } },
+      { head: 'Batas y', html: `${m`c=0`} (sumbu x) dan ${m`d=1`}: titik potong ${m`x=1`} memberi ${m`y=1`}.`, on: () => { g.hline(0, { cls: 'gd red' }); g.hline(1, { cls: 'gd red' }); g.text(-1.7, 1, 'd = 1', { dx: 6, dy: -6, cls: 'red sm ui' }); g.text(-1.7, 0, 'c = 0', { dx: 6, dy: -6, cls: 'red sm ui' }); } }
+    ], { key: 'xfy' });
+    mcq(P, {
+      q: `Mengapa dipakai ${m`x=\sqrt{y}`} dan bukan ${m`x=-\sqrt{y}`}?`,
+      opts: [
+        { t: `Karena daerah yang dihitung berada di sisi ${m`x\ge 0`}`, ok: true, fb: `Cabang ${m`x=-\sqrt y`} ada di kiri sumbu y dan tidak menyentuh daerah yang diarsir.` },
+        { t: 'Karena akar kuadrat selalu positif, jadi −√y tidak ada', fb: `${m`x=-\sqrt y`} tetap bagian dari parabola ${m`y=x^2`} (cabang kiri). Kita tidak memakainya karena daerahnya ada di kanan.` },
+        { t: 'Karena rumus dy hanya menerima fungsi positif', fb: 'Rumus dy tidak mensyaratkan fungsi positif. Yang penting adalah cabang mana yang membatasi daerah.' }]
+    });
+  }
+});
+
+/* ---------- 18 dy EXAMPLE 5/6 ---------- */
+def({
+  sec: 'Irisan horizontal (dy)', title: 'Contoh dy: luas = 5/6', build(r) {
+    const F = frame(r, {
+      eyebrow: eb(18, 'Irisan horizontal', badge('pdf', 'Contoh Soal 1 (dy) · hal. 12')),
+      title: `Contoh dengan dy: luasnya ${m`\tfrac56`}`,
+      lead: `Hitung luas daerah yang dibatasi oleh sumbu x, ${m`y=x^2`}, dan ${m`y=-x+2`} dengan irisan horizontal.`,
+      cap: 'Garis merah putus-putus: batas c = 0 dan d = 1.'
+    });
+    const g = new Graph(F.gHost, { x: [-0.45, 2.6], y: [-0.45, 2.1], gx: .25, lx: .5 });
+    g.areaY(y => 2 - y, Math.sqrt, 0, 1, { cls: 'area' });
+    g.curve(f_x2, -0.45, 1.5, { cls: 'c2' }); g.curve(x => 2 - x, -0.45, 2.6, { cls: 'c1' });
+    g.hline(1, { cls: 'gd red' }); g.hline(0, { cls: 'gd red' });
+    g.text(-0.45, 1, 'd = 1', { dx: 6, dy: -6, cls: 'red sm ui' }); g.text(-0.45, 0, 'c = 0', { dx: 6, dy: -6, cls: 'red sm ui' });
+    g.dot(1, 1); g.text(1, 1, '(1, 1)', { dx: 10, dy: -6, cls: 'm' });
+    const lP = g.text(1.3, 1.69, 'y = x²', { dx: -10, anchor: 'end', cls: 'c2 it' }), lLn = g.text(2.05, .15, 'y = −x + 2', { dx: 8, dy: -8, cls: 'c1 it' });
+    const P = F.panel;
+    chain([
+      next => mcq(P, {
+        tag: 'Left–right selector', q: 'Untuk irisan horizontal pada 0 ≤ y ≤ 1, kurva mana yang menjadi batas KIRI?',
+        opts: [
+          { t: m`x_L=\sqrt{y}\;\;(\text{dari } y=x^2)`, ok: true, fb: `Pada ${m`y=0{,}5`}: ${m`\sqrt{0{,}5}\approx0{,}71`} dan ${m`2-0{,}5=1{,}5`}. Parabola di kiri, garis di kanan.` },
+          { t: m`x_L=2-y\;\;(\text{dari } y=-x+2)`, fb: `Uji ${m`y=0{,}5`}: garis memberi ${m`x=1{,}5`}, parabola memberi ${m`x\approx0{,}71`}. Nilai x yang lebih kecil adalah batas kiri.` }],
+        onCorrect: () => { svgText(lP, 'x_L = √y'); svgText(lLn, 'x_R = 2 − y'); next(); }
+      }),
+      next => {
+        const ctl = E('div', { class: 'block' }); P.append(ctl);
+        slider(ctl, {
+          label: 'Posisi irisan y', min: .04, max: .96, step: .02, value: .5, oninput: y => {
+            g.clear('slices'); g.clear('top'); const L = Math.sqrt(y), R = 2 - y;
+            g.rect(L, R, y - .04, y + .04, { cls: 'hot' }); g.vbrace(R + .06, y - .04, y + .04, 'Δy', { cls: 'kS', tcls: 'kS' });
+            g.text((L + R) / 2, y, (R - L).toFixed(2).replace('.', ','), { layer: 'top', anchor: 'middle', dy: -10, cls: 'kS sm ui' });
+          }
+        });
+        stepper(P, [
+          { head: 'Luas irisan', html: `${dm`\Delta A\approx\big(f(y)-g(y)\big)\Delta y`}dengan ${m`f(y)=2-y`} (kanan) dan ${m`g(y)=\sqrt y`} (kiri).` },
+          { head: 'Integral', html: `${dm`A=\int_c^d\big(f(y)-g(y)\big)\,dy`}${dm`A=\int_0^1\big[(2-y)-\sqrt{y}\,\big]\,dy`}` },
+          { head: 'Antiturunan dan substitusi', html: dm`=2y-\frac{y^2}{2}-\frac{2\sqrt{y^3}}{3}\Big|_0^1=\Big[\Big(2-\frac12-\frac23\Big)-(0)\Big]` },
+          { head: 'Hasil', html: dm`=\frac56`, on: () => g.text(.95, .45, 'A = 5/6', { layer: 'labels', anchor: 'middle', cls: 'big ui' }) }
+        ], {
+          key: 'dy56', onDone: () => { const n = blk(P, `<div class="note cmp"><b>Cara berbeda, luas sama.</b><div class="tablewrap"><table class="sumtab"><tr><th>Irisan</th><th>Integral</th><th>Luas</th></tr><tr><td>dx (slide 14)</td><td>${m`\tfrac13+\tfrac12`}</td><td>${m`\tfrac56`}</td></tr><tr><td>dy</td><td>${m`\int_0^1[(2-y)-\sqrt y\,]\,dy`}</td><td>${m`\tfrac56`}</td></tr></table></div><p class="small muted">Luas tidak bergantung pada arah irisan. Yang berbeda hanya jumlah integral yang perlu dihitung.</p></div>`); typeset(n); }
+        });
+        typeset(P); next();
+      }
+    ]);
+  }
+});
+
+/* ---------- shared: y = x - 1 and y^2 = 2x + 6 ---------- */
+const xL4 = y => .5 * y * y - 3, xR4 = y => y + 1;
+function graphEx4(host) {
+  const g = new Graph(host, { x: [-4, 6.6], y: [-4.4, 5.4], gx: 1, lx: 2, ly: 2, aria: 'Garis y = x - 1 dan parabola y kuadrat = 2x + 6' });
+  const area = g.areaY(xR4, xL4, -2, 4, { cls: 'area' });
+  const pP = g.curveY(xL4, -4.4, 5.4, { cls: 'c2' }), pL = g.curve(x => x - 1, -4, 6.6, { cls: 'c1' });
+  g.dot(-1, -2); g.dot(5, 4);
+  g.text(-1, -2, '(−1, −2)', { dx: -10, dy: 4, anchor: 'end', cls: 'm' }); g.text(5, 4, '(5, 4)', { dx: -10, dy: -8, anchor: 'end', cls: 'm' });
+  const lP = g.text(-3.9, 4.75, 'y² = 2x + 6', { cls: 'c2 it' }), lL = g.text(5.3, 3.2, 'y = x − 1', { cls: 'c1 it' });
+  return { g, pP, pL, lP, lL, area };
+}
+
+/* ---------- 19 ADVANCED EXAMPLE: CHOOSE dx or dy ---------- */
+def({
+  sec: 'Irisan horizontal (dy)', title: 'Contoh lanjutan: y = x − 1 dan y² = 2x + 6', build(r) {
+    const F = frame(r, {
+      eyebrow: eb(19, 'Contoh lanjutan', badge('pdf', 'Contoh Soal 2 (dy) · hal. 13')),
+      title: `Contoh lanjutan: ${m`y=x-1`} dan ${m`y^2=2x+6`}`,
+      lead: `Hitung luas daerah yang dibatasi oleh garis ${m`y=x-1`} dan parabola ${m`y^2=2x+6`}. Sebelum menghitung, putuskan arah irisannya.`, bar: true,
+      cap: 'Gunakan tombol pratinjau untuk melihat bentuk irisan pada kedua arah.'
+    });
+    const { g } = graphEx4(F.gHost);
+    const draw = i => {
+      g.clear('slices'); g.clear('guides'); g.clear('top');
+      if (i === 0) {
+        for (let xm = -2.8; xm < 5; xm += .5) { const top = Math.sqrt(2 * xm + 6), bot = xm < -1 ? -top : xm - 1; g.rect(xm - .19, xm + .19, bot, top, { cls: xm < -1 ? 'g1' : 'g2' }); }
+        g.vline(-1, { cls: 'gd acc' }); g.text(-1, -4.4, 'x = −1: batas bawah berubah', { layer: 'top', dx: 6, dy: -8, cls: 'acc sm ui' });
+      } else if (i === 1) {
+        for (let ym = -1.75; ym < 4; ym += .5) g.rect(xL4(ym), xR4(ym), ym - .19, ym + .19, { cls: 'g2' });
+      }
+    };
+    const sg = seg(F.figBar, ['Pratinjau dx', 'Pratinjau dy', 'Tanpa irisan'], draw, 2, 'Pratinjau irisan');
+    const P = F.panel;
+    mcq(P, {
+      key: 'pilihdy', q: 'Apakah lebih mudah menggunakan dx atau dy?', cols: true,
+      opts: [
+        { t: 'dx (irisan vertikal)', fb: `Bisa, tetapi batas bawah berubah di ${m`x=-1`}. Di kiri ${m`x=-1`} kedua batas berasal dari parabola (${m`y=\pm\sqrt{2x+6}`}); di kanannya batas bawah adalah garis. Perlu dua integral dengan bentuk akar. Lihat pratinjau dx.` },
+        { t: 'dy (irisan horizontal)', ok: true, fb: `Setiap irisan horizontal dimulai di parabola ${m`x=\tfrac12y^2-3`} dan berakhir di garis ${m`x=y+1`}. Satu integral cukup.` }],
+      onWrong: () => sg.set(0), onCorrect: () => sg.set(1)
+    });
+    blk(P, `<div class="note"><b>Yang perlu diperhatikan pada grafik</b><p>Parabola ${m`y^2=2x+6`} membuka ke kanan. Untuk satu nilai ${m`x`} ada dua nilai ${m`y`}, tetapi untuk satu nilai ${m`y`} hanya ada satu nilai ${m`x`}. Itu tanda irisan horizontal lebih cocok.</p></div>`);
+  }
+});
+
+/* ---------- 20 TRANSFORM & INTERSECTION ---------- */
+def({
+  sec: 'Irisan horizontal (dy)', title: 'Mengubah persamaan menjadi x = f(y)', build(r) {
+    const F = frame(r, {
+      eyebrow: eb(20, 'Contoh lanjutan', badge('pdf', 'Contoh Soal 2 (dy) · hal. 13')),
+      title: `Mengubah persamaan menjadi ${m`x=f(y)`} dan mencari titik potong`,
+      lead: 'Tulis kedua kurva sebagai fungsi y, tentukan mana yang kiri dan kanan, lalu samakan untuk mencari titik potong.'
+    });
+    const { g, pP, pL, lP, lL } = graphEx4(F.gHost);
+    g.ly.marks.classList.add('hidden');
+    const P = F.panel;
+    mcq(P, {
+      tag: 'Left–right selector', q: 'Pada daerah ini, kurva mana yang menjadi batas KIRI (x<sub>L</sub>)?',
+      opts: [
+        { t: `Parabola ${m`y^2=2x+6`}`, ok: true, fb: `Uji ${m`y=0`}: parabola memberi ${m`x=-3`}, garis memberi ${m`x=1`}. Parabola di kiri.` },
+        { t: `Garis ${m`y=x-1`}`, fb: `Uji ${m`y=0`}: garis memberi ${m`x=1`}, parabola memberi ${m`x=-3`}. Nilai x yang lebih kecil adalah batas kiri.` }]
+    });
+    stepper(P, [
+      { head: 'Batas kiri x<sub>L</sub>', html: dm`y^2=2x+6\;\rightarrow\;x=\tfrac12y^2-3`, on: () => { pP.setAttribute('class', 'cv c2 thick'); svgText(lP, 'x_L = ½y² − 3'); } },
+      { head: 'Batas kanan x<sub>R</sub>', html: dm`y=x-1\;\rightarrow\;x=y+1`, on: () => { pL.setAttribute('class', 'cv c1 thick'); svgText(lL, 'x_R = y + 1'); } },
+      { head: 'Titik potong: x<sub>L</sub> = x<sub>R</sub>', html: dm`\tfrac12y^2-3=y+1` },
+      { head: 'Kalikan 2', html: dm`y^2-6=2y+2` },
+      { head: 'Bentuk kuadrat dan faktorkan', html: dm`y^2-2y-8=0\;\rightarrow\;(y+2)(y-4)=0` },
+      { head: 'Selesaikan', html: `${dm`y=-2,\;y=4\;\;\rightarrow\;\;x=-1,\;x=5`}<p>Titik potong kedua persamaan adalah ${m`(-1,-2)`} dan ${m`(5,4)`}.</p>`, on: () => { g.ly.marks.classList.remove('hidden'); g.ly.marks.querySelectorAll('circle').forEach(c => c.classList.add('pulse')); g.hline(-2, { cls: 'gd acc' }); g.hline(4, { cls: 'gd acc' }); } }
+    ], { key: 'xfy4' });
+  }
+});
+
+/* ---------- 21 BUILD dy INTEGRAL ---------- */
+def({
+  sec: 'Irisan horizontal (dy)', title: 'Membentuk integral dengan dy', build(r) {
+    const F = frame(r, {
+      eyebrow: eb(21, 'Contoh lanjutan', badge('pdf', 'Contoh Soal 2 (dy) · hal. 14')),
+      title: 'Membentuk integral dengan dy',
+      lead: 'Klik setiap bagian integral untuk melihat asalnya pada grafik, lalu buka perhitungannya.'
+    });
+    const { g, pP, pL, lP, lL } = graphEx4(F.gHost);
+    svgText(lP, 'x_L = ½y² − 3'); svgText(lL, 'x_R = y + 1');
+    const P = F.panel;
+    const expl = E('div', { class: 'fb info', html: '<strong>INFO</strong> Pilih salah satu bagian integral di atas.' });
+    const parts = [
+      ['lim', m`\int_{-2}^{4}`, '', () => { g.hline(-2, { cls: 'gd acc' }); g.hline(4, { cls: 'gd acc' }); g.ly.marks.querySelectorAll('circle').forEach(c => { c.classList.remove('pulse'); void c.getBBox(); c.classList.add('pulse'); }); g.text(-4, 4, 'd = 4', { layer: 'top', dx: 30, dy: -6, cls: 'acc sm ui' }); g.text(-4, -2, 'c = −2', { layer: 'top', dx: 6, dy: 18, cls: 'acc sm ui' }); return `Batas integral adalah nilai ${m`y`} dari titik potong ${m`(-1,-2)`} dan ${m`(5,4)`}. Karena irisannya horizontal, batasnya ${m`y=-2`} sampai ${m`y=4`}.`; }],
+      ['xr', m`(y+1)`, 'p1', () => { pL.setAttribute('class', 'cv c1 thick'); return `${m`x_R=y+1`} berasal dari garis ${m`y=x-1`}. Garis ini ujung <b>kanan</b> setiap irisan horizontal.`; }],
+      ['xl', m`\big(\tfrac12y^2-3\big)`, 'p2', () => { pP.setAttribute('class', 'cv c2 thick'); return `${m`x_L=\tfrac12y^2-3`} berasal dari parabola ${m`y^2=2x+6`}. Parabola ini ujung <b>kiri</b> setiap irisan horizontal.`; }],
+      ['dy', m`dy`, '', () => { g.rect(xL4(1), xR4(1), .8, 1.2, { cls: 'hot' }); g.vbrace(xR4(1) + .2, .8, 1.2, 'Δy', { cls: 'kS', tcls: 'kS' }); g.hbrace(.6, xL4(1), xR4(1), 'x_R − x_L', { cls: 'kS', tcls: 'kS' }); return `${m`dy`} menandakan irisan horizontal dengan lebar ${m`\Delta y`}. Panjang irisan adalah ${m`x_R-x_L`}.`; }]
+    ];
+    const row = E('div', { class: 'fx-parts' }, E('span', { html: m`A=` }));
+    const btns = {};
+    const pick = k => {
+      Object.values(btns).forEach(b => b.classList.remove('on')); btns[k].classList.add('on');
+      g.clear('guides'); g.clear('slices'); g.clear('top'); pP.setAttribute('class', 'cv c2'); pL.setAttribute('class', 'cv c1');
+      const p = parts.find(x => x[0] === k); setFb(expl, 'info', p[3]()); expl.firstChild.textContent = 'ASAL BAGIAN INI';
+    };
+    parts.forEach(([k, tex, cls], i) => {
+      const b = E('button', { class: 'fx-part ' + cls, type: 'button', html: tex, 'aria-label': 'Bagian integral ' + (i + 1) }); b.addEventListener('click', () => pick(k)); btns[k] = b;
+      if (k === 'xr') row.append(E('span', { class: 'eq', html: m`\Big[` }));
+      if (k === 'xl') row.append(E('span', { class: 'eq', html: m`-` }));
+      row.append(b);
+      if (k === 'xl') row.append(E('span', { class: 'eq', html: m`\Big]` }));
+    });
+    P.append(E('div', { class: 'plate' }, E('span', { class: 'lbl' }, 'Klik setiap bagian'), row), expl);
+    stepper(P, [
+      { head: 'Rumus', html: dm`A=\int_{-2}^{4}\big(x_R-x_L\big)\,dy` },
+      { head: 'Substitusi x<sub>R</sub> dan x<sub>L</sub>', html: dm`=\int_{-2}^{4}\Big[(y+1)-\big(\tfrac12y^2-3\big)\Big]\,dy` },
+      { head: 'Sederhanakan', html: dm`=\int_{-2}^{4}\big(-\tfrac12y^2+y+4\big)\,dy` },
+      { head: 'Antiturunan', html: dm`=-\frac12\Big(\frac{y^3}{3}\Big)+\frac{y^2}{2}+4y\,\Bigg]_{-2}^{4}` },
+      { head: 'Hasil', html: `${dm`=-\tfrac16(64)+8+16-\big(\tfrac43+2-8\big)=18`}<p>Luas daerah = <b>18</b> satuan luas.</p>`, on: () => { g.text(1.2, 1.9, 'A = 18', { layer: 'labels', anchor: 'middle', cls: 'big ui' }); } }
+    ], { key: 'dy18' });
+    blk(P, `<details class="more"><summary>${badge('cmp', 'Pembanding · bukan dari materi')} Bagaimana jika memakai dx?</summary><div>
+      ${dm`\begin{aligned}A&=\int_{-3}^{-1}2\sqrt{2x+6}\,dx\\&\quad+\int_{-1}^{5}\Big[\sqrt{2x+6}-(x-1)\Big]\,dx\end{aligned}`}${dm`=\frac{16}{3}+\frac{38}{3}=18`}
+      <p class="small">Hasilnya sama, tetapi perlu dua integral dengan bentuk akar. Karena itu materi memilih dy.</p></div></details>`);
+  }
+});
+
+/* ---------- 22 DECISION TREE ---------- */
+def({
+  sec: 'Strategi', title: 'Strategi memilih dx atau dy', build(r) {
+    r.append(E('div', { class: 's-head' },
+      E('div', { class: 'eyebrow', html: eb(22, 'Strategi') }),
+      E('h2', { html: `Strategi memilih ${m`dx`} atau ${m`dy`}` }),
+      E('p', { class: 'lead', html: 'Pilih salah satu contoh dari modul untuk melihat jalurnya pada pohon keputusan.' })));
+    const grid = E('div', { class: 'grid even' }); r.append(grid);
+    const ids = {}; ['n1', 'a1y', 'n2', 'a1n', 'n3', 'a2y', 'n4', 'a2n', 'n5'].forEach(k => ids[k] = uid('t'));
+    const tree = H(`<div class="tree">
+      <div class="tnode q" id="${ids.n1}">Apakah irisan vertikal memberikan SATU batas atas–bawah untuk seluruh daerah?</div>
+      <div class="tbranch">
+        <div class="tcol"><div class="tarrow" id="${ids.a1y}">YA ↓</div><div class="tnode leaf" id="${ids.n2}">Gunakan dx</div></div>
+        <div class="tcol"><div class="tarrow" id="${ids.a1n}">TIDAK ↓</div><div class="tnode q" id="${ids.n3}">Apakah irisan horizontal memberikan SATU batas kiri–kanan?</div>
+          <div class="tbranch" style="margin-top:12px">
+            <div class="tcol"><div class="tarrow" id="${ids.a2y}">YA ↓</div><div class="tnode leaf" id="${ids.n4}">Gunakan dy</div></div>
+            <div class="tcol"><div class="tarrow" id="${ids.a2n}">TIDAK ↓</div><div class="tnode leaf" id="${ids.n5}">Bagi menjadi subregion</div></div>
+          </div></div>
+      </div>
+      <div class="note">Jika keduanya memungkinkan, pilih pendekatan yang menghasilkan integral paling sederhana. <b>Ini strategi praktis, bukan aturan mutlak.</b></div>
+    </div>`);
+    const right = E('div', { class: 'panel' });
+    grid.append(E('div', { class: 'fig', style: 'padding:16px' }, tree), right);
+    const cases = [
+      { t: 'y = x dan y = x²', path: ['n1', 'a1y', 'n2'], html: `Irisan vertikal: atas selalu ${m`y=x`}, bawah selalu ${m`y=x^2`} pada ${m`0\le x\le1`}. Satu integral dengan dx.`, go: [[8, 'Contoh 1 (slide 9)']] },
+      { t: 'x², −x + 2, sumbu x', path: ['n1', 'a1n', 'n3', 'a2y', 'n4'], html: `Irisan vertikal: batas atas berubah di ${m`x=1`} (tetap bisa, dengan 2 subregion). Irisan horizontal: kiri ${m`x=\sqrt y`}, kanan ${m`x=2-y`}. Satu integral dengan dy.`, go: [[13, 'Versi dx (slide 14)'], [17, 'Versi dy (slide 18)']] },
+      { t: 'y = x − 1 dan y² = 2x + 6', path: ['n1', 'a1n', 'n3', 'a2y', 'n4'], html: `Irisan vertikal: batas bawah berubah di ${m`x=-1`}. Irisan horizontal: kiri parabola ${m`x=\tfrac12y^2-3`}, kanan garis ${m`x=y+1`}. Gunakan dy.`, go: [[20, 'Contoh lanjutan (slide 21)']] },
+      { t: '|x² − 1| pada [−2, 2]', path: ['n1', 'a1n', 'n3', 'a2n', 'n5'], html: `Kurva memotong sumbu-x di ${m`x=\pm1`}, sehingga batas atas–bawah bergantian antara kurva dan sumbu-x. Daerah dibagi menjadi L1, L2, L3.`, go: [[4, 'Penyelesaian (slide 5)']] }
+    ];
+    const info = E('div', { class: 'note' });
+    right.append(H('<div class="q-tag">Pilih contoh</div>'));
+    const segW = E('div'); right.append(segW, info);
+    seg(segW, cases.map(c => c.t), i => {
+      Object.values(ids).forEach(id => { const n = tree.querySelector('#' + id); n && n.classList.remove('on'); });
+      cases[i].path.forEach(k => tree.querySelector('#' + ids[k]).classList.add('on'));
+      info.replaceChildren(H(cases[i].html), E('div', { class: 'row' }, cases[i].go.map(([k, t]) => E('button', { class: 'btn sm', type: 'button', onclick: () => App.go(k) }, 'Buka ' + t + ' →'))));
+      typeset(info);
+    }, 0, 'Contoh');
+    mcq(right, {
+      key: 'tree', q: `Contoh Soal 3 (${m`y=x^2`} dan ${m`y=2x-x^2`}): jalur mana yang tepat?`,
+      opts: [
+        { t: 'YA → gunakan dx', ok: true, fb: `Pada ${m`0\le x\le1`}, atas selalu ${m`2x-x^2`} dan bawah selalu ${m`x^2`}. Satu integral dengan dx, seperti di materi.` },
+        { t: 'TIDAK → YA → gunakan dy', fb: `Dengan dy, setiap parabola harus dipecah menjadi dua cabang akar. Irisan vertikal jauh lebih sederhana di sini.` },
+        { t: 'TIDAK → TIDAK → bagi subregion', fb: 'Batas atas dan bawah tidak berganti di dalam interval, jadi tidak perlu dibagi.' }]
+    });
+  }
+});
+
+/* ---------- 23 WORKFLOW ---------- */
+def({
+  sec: 'Strategi', title: 'Langkah umum menyelesaikan luas daerah', build(r) {
+    const F = frame(r, {
+      eyebrow: eb(23, 'Workflow'),
+      title: 'Langkah umum menyelesaikan luas daerah',
+      lead: 'Klik setiap langkah. Grafik menunjukkan penerapannya pada Contoh 1 (y = x dan y = x²).'
+    });
+    const steps = [
+      ['Gambar grafik', `Sketsa ${m`y=x`} (garis) dan ${m`y=x^2`} (parabola).`],
+      ['Tentukan daerah', 'Daerah tertutup di antara keduanya (diarsir).'],
+      ['Cari titik potong', `${m`x=x^2\Rightarrow x(x-1)=0\Rightarrow x=0,\,1`}. Titik ${m`(0,0)`} dan ${m`(1,1)`}.`],
+      ['Pilih dx atau dy', 'Irisan vertikal: atas selalu y = x, bawah selalu y = x². Pilih dx.'],
+      ['Tentukan batas', `${m`a=0`}, ${m`b=1`}.`],
+      ['Tentukan fungsi pembatas', `Atas ${m`f(x)=x`}, bawah ${m`g(x)=x^2`}.`],
+      ['Bentuk integral', dm`L=\int_0^1\big(x-x^2\big)\,dx`],
+      ['Hitung', dm`\Big[\tfrac{x^2}{2}-\tfrac{x^3}{3}\Big]_0^1=\tfrac12-\tfrac13=\tfrac16`],
+      ['Interpretasikan luas', `Luas ${m`\tfrac16\approx0{,}167`} satuan luas. Periksa kewajaran: hasilnya positif dan lebih kecil dari segitiga ${m`(0,0),(1,0),(1,1)`} yang luasnya ${m`\tfrac12`}.`]
+    ];
+    const wf = E('div', { class: 'wf', role: 'list' });
+    r.insertBefore(wf, F.grid); wf.style.marginBottom = '18px';
+    const detail = E('div', { class: 'plate' }); F.panel.append(detail);
+    const nav = E('div', { class: 'row' }); F.panel.append(nav);
+    let cur = 0; const btns = [];
+    const apply = k => {
+      cur = k; F.gHost.replaceChildren();
+      const { g, pA, pB, lA, lB } = graphEx1(F.gHost, false);
+      if (k < 1) { g.ly.curves.style.opacity = 1; }
+      if (k >= 1) g.areaX(f_x, f_x2, 0, 1, { cls: 'area' });
+      if (k >= 2) { g.dot(0, 0); g.dot(1, 1); g.text(1, 1, '(1, 1)', { dx: 10, dy: 18, cls: 'm' }); }
+      if (k >= 3) g.rect(.5, .58, .54 * .54, .54, { cls: 'hot' });
+      if (k >= 4) { g.vline(0, { cls: 'gd acc' }); g.vline(1, { cls: 'gd acc' }); }
+      if (k >= 5) { pA.classList.add('thick'); pB.classList.add('thick'); lA.textContent = 'f(x) = x'; lB.textContent = 'g(x) = x²'; }
+      if (k >= 7) g.text(.36, .3, 'L = 1/6', { anchor: 'middle', cls: 'big ui', layer: 'top' });
+      btns.forEach((b, j) => { b.classList.toggle('on', j === k); b.classList.toggle('past', j < k); b.setAttribute('aria-current', j === k ? 'step' : 'false'); });
+      setMath(detail, `<span class="lbl">Langkah ${k + 1} dari 9</span><h3 style="margin-bottom:6px">${steps[k][0]}</h3><div>${steps[k][1]}</div>`);
+      prev.disabled = k === 0; nxt.disabled = k === 8; if (k === 8) App.done('wf');
+    };
+    steps.forEach(([t], k) => { const b = E('button', { type: 'button', role: 'listitem' }, E('span', {}, String(k + 1).padStart(2, '0')), t); b.addEventListener('click', () => apply(k)); wf.append(b); btns.push(b); });
+    const prev = E('button', { class: 'btn sm', type: 'button', onclick: () => apply(cur - 1) }, '← Langkah sebelumnya');
+    const nxt = E('button', { class: 'btn sm primary', type: 'button', onclick: () => apply(cur + 1) }, 'Langkah berikutnya →');
+    nav.append(prev, nxt);
+    apply(0);
+  }
+});
+
+/* ---------- pick-and-check (dropdown) question ---------- */
+function pickq(parent, o) {
+  const wrap = E('div', { class: 'q' });
+  if (o.tag) wrap.append(E('div', { class: 'q-tag' }, o.tag));
+  if (o.q) wrap.append(E('p', { class: 'q-text', html: o.q }));
+  const sels = o.fields.map(([label, opts, init]) => { const id = uid('pk'); const s = E('select', { id }); opts.forEach(([v, t]) => s.append(E('option', { value: v, selected: v === init }, t))); wrap.append(E('label', { class: 'field', for: id }, label, s)); return s; });
+  const grid = E('div', { class: 'field-grid' }); [...wrap.querySelectorAll('.field')].forEach(f => grid.append(f)); wrap.append(grid);
+  const chk = E('button', { class: 'btn primary sm', type: 'button' }, 'CHECK ANSWER');
+  const fb = E('div', { class: 'fb', hidden: true, 'aria-live': 'polite' });
+  const hintBox = E('div', { class: 'hint', hidden: true });
+  const tools = E('div', { class: 'q-tools' }, chk,
+    o.hint ? E('button', { class: 'btn sm', type: 'button', onclick: () => { hintBox.hidden = false; setMath(hintBox, '<strong>Hint.</strong> ' + o.hint); } }, 'SHOW HINT') : null,
+    E('button', { class: 'btn sm', type: 'button', onclick: () => { o.solVals.forEach((v, i) => sels[i].value = v); finish(true); } }, 'SHOW SOLUTION'));
+  let solved = false;
+  const finish = shown => { if (solved) return; solved = true; sels.forEach(s => s.disabled = true); tools.hidden = true; hintBox.hidden = true; setFb(fb, shown ? 'info' : 'ok', o.okFb || ''); o.onCorrect && o.onCorrect(!shown); };
+  chk.addEventListener('click', () => { const r = o.check(sels.map(s => s.value)); if (r === true) finish(false); else setFb(fb, 'bad', r); });
+  wrap.append(tools, fb, hintBox); parent.append(wrap); typeset(wrap);
+  return wrap;
+}
+
+/* ---------- 24 INTERACTIVE PROBLEM SOLVER ---------- */
+def({
+  sec: 'Latihan', title: 'Interactive problem solver', build(r) {
+    const F = frame(r, {
+      eyebrow: eb(24, 'Problem solver', badge('extra', 'Latihan tambahan')),
+      title: 'Interactive problem solver',
+      lead: `Hitung luas daerah yang dibatasi oleh ${m`y=x^2`} dan ${m`y=x+2`}. Setiap tahap harus benar sebelum tahap berikutnya terbuka.`, bar: true,
+      cap: 'Grafik terbangun mengikuti jawaban Anda.'
+    });
+    const g = new Graph(F.gHost, { x: [-1.8, 2.8], y: [-0.6, 4.8], gx: .5, lx: 1 });
+    const pP = g.curve(f_x2, -1.8, 2.8, { cls: 'cn dash' }), pL = g.curve(x => x + 2, -1.8, 2.8, { cls: 'cn' });
+    const lP = g.text(2.15, 4.62, 'y = x²', { dx: 8, dy: 8, cls: 'cn it' }), lL = g.text(-1.7, .3, 'y = x + 2', { dx: 6, dy: -8, cls: 'cn it' });
+    const dots = E('div', { class: 'dots', 'aria-hidden': 'true' }, [1, 2, 3, 4, 5, 6].map(() => E('i')));
+    F.figBar.append(E('span', { class: 'small muted' }, 'Progres'), dots);
+    const mark = k => [...dots.children].forEach((d, j) => d.classList.toggle('on', j < k));
+    const P = F.panel;
+    const stage = (n, t) => { const s = E('div', { class: 'stage' }, E('div', { class: 'stage-h' }, `STEP ${n} · ${t}`)); P.append(s); return s; };
+    chain([
+      next => mcq(stage(1, 'Pilih titik potong'), {
+        q: 'Di mana kedua kurva berpotongan?',
+        opts: [
+          { t: `${m`x=-1`} dan ${m`x=2`}`, ok: true, fb: `${m`x^2=x+2\Rightarrow x^2-x-2=0\Rightarrow(x-2)(x+1)=0`}. Titik ${m`(-1,1)`} dan ${m`(2,4)`}.` },
+          { t: `${m`x=1`} dan ${m`x=-2`}`, fb: `Uji ${m`x=1`}: ${m`x^2=1`} tetapi ${m`x+2=3`}. Periksa tanda saat memfaktorkan ${m`x^2-x-2`}.` },
+          { t: `${m`x=0`} dan ${m`x=2`}`, fb: `Uji ${m`x=0`}: ${m`x^2=0`} tetapi ${m`x+2=2`}. Bukan titik potong.` }],
+        hint: `Samakan ${m`x^2=x+2`}, pindahkan ke satu ruas, lalu faktorkan.`,
+        onCorrect: () => { mark(1); g.dot(-1, 1, { cls: 'pulse' }); g.dot(2, 4, { cls: 'pulse' }); g.text(-1, 1, '(−1, 1)', { dx: -10, dy: -8, anchor: 'end', cls: 'm' }); g.text(2, 4, '(2, 4)', { dx: 10, dy: 14, cls: 'm' }); next(); }
+      }),
+      next => mcq(stage(2, 'Pilih dx / dy'), {
+        q: 'Arah irisan mana yang memberi satu integral?', cols: true,
+        opts: [
+          { t: 'dx (vertikal)', ok: true, fb: 'Setiap irisan vertikal dimulai di parabola dan berakhir di garis, di seluruh interval. Satu integral.' },
+          { t: 'dy (horizontal)', fb: `Dengan dy, batas kiri berubah di ${m`y=1`}: di bawahnya kedua ujung pada parabola (${m`x=\pm\sqrt y`}), di atasnya ujung kiri adalah garis ${m`x=y-2`}. Perlu dua integral.` }],
+        onCorrect: () => { mark(2); g.rect(.46, .54, .25, 2.5, { cls: 'hot' }); next(); }
+      }),
+      next => pickq(stage(3, 'Pilih batas'), {
+        q: 'Tentukan batas integrasi.',
+        fields: [['BATAS BAWAH a', [['-2', '−2'], ['-1', '−1'], ['0', '0'], ['1', '1']], '0'], ['BATAS ATAS b', [['1', '1'], ['2', '2'], ['4', '4']], '1']],
+        check: ([a, b]) => (a === '-1' && b === '2') ? true : 'Batas integrasi adalah absis titik potong dari STEP 1.',
+        solVals: ['-1', '2'], okFb: `${m`a=-1`}, ${m`b=2`}.`,
+        onCorrect: () => { mark(3); g.vline(-1, { cls: 'gd acc' }); g.vline(2, { cls: 'gd acc' }); next(); }
+      }),
+      next => pickq(stage(4, 'Pilih fungsi pembatas'), {
+        q: 'Tentukan kurva atas dan kurva bawah pada −1 < x < 2.',
+        fields: [['FUNGSI ATAS', [['x2', 'x²'], ['lin', 'x + 2']], 'x2'], ['FUNGSI BAWAH', [['x2', 'x²'], ['lin', 'x + 2']], 'lin']],
+        check: ([t, b]) => (t === 'lin' && b === 'x2') ? true : 'Periksa kembali kurva atas dan kurva bawah. Uji x = 0: x + 2 = 2, sedangkan x² = 0.',
+        hint: 'Substitusi satu nilai x di dalam interval, misalnya x = 0, ke kedua persamaan.',
+        solVals: ['lin', 'x2'], okFb: `Atas ${m`y=x+2`}, bawah ${m`y=x^2`}. Tinggi irisan ${m`(x+2)-x^2`}.`,
+        onCorrect: () => { mark(4); pL.setAttribute('class', 'cv c1'); pP.setAttribute('class', 'cv c2'); lL.setAttribute('class', 'lb c1 it'); lP.setAttribute('class', 'lb c2 it'); next(); }
+      }),
+      next => mcq(stage(5, 'Bangun integral'), {
+        q: 'Integral mana yang menyatakan luas daerah?',
+        opts: [
+          { t: m`\int_{-1}^{2}\big(x+2-x^2\big)\,dx`, ok: true, fb: 'Batas dari titik potong, integran atas dikurangi bawah.' },
+          { t: m`\int_{-1}^{2}\big(x^2-x-2\big)\,dx`, fb: 'Urutannya terbalik (bawah dikurangi atas), sehingga hasilnya negatif.' },
+          { t: m`\int_{-2}^{1}\big(x+2-x^2\big)\,dx`, fb: 'Batasnya tidak sesuai titik potong dari STEP 1.' }],
+        onCorrect: () => { mark(5); next(); }
+      }),
+      next => numq(stage(6, 'Hitung luas'), {
+        q: `Hitung ${m`\int_{-1}^{2}\big(x+2-x^2\big)\,dx`}.`, pre: m`A=`, ans: 4.5, exact: '\\tfrac92', exactTxt: '9/2', key: 'solver',
+        hint: [`Antiturunan: ${m`\tfrac{x^2}{2}+2x-\tfrac{x^3}{3}`}.`, `Nilai di ${m`x=2`}: ${m`\tfrac{10}{3}`}. Nilai di ${m`x=-1`}: ${m`-\tfrac76`}.`],
+        okFb: dm`\Big[\tfrac{x^2}{2}+2x-\tfrac{x^3}{3}\Big]_{-1}^{2}=\tfrac{10}{3}-\big(-\tfrac76\big)=\tfrac92`,
+        sol: dm`\Big[\tfrac{x^2}{2}+2x-\tfrac{x^3}{3}\Big]_{-1}^{2}=\tfrac{10}{3}-\big(-\tfrac76\big)=\tfrac92`,
+        onCorrect: () => { mark(6); g.clear('slices'); growAreaX(g, x => x + 2, f_x2, -1, 2, 'area', 1200); g.text(.5, 1.6, 'A = 9/2', { layer: 'top', anchor: 'middle', cls: 'big ui' }); }
+      })
+    ]);
+  }
+});
+
+/* ---------- 25 GUIDED PRACTICE ---------- */
+def({
+  sec: 'Latihan', title: 'Latihan terbimbing', build(r) {
+    r.append(E('div', { class: 's-head' },
+      E('div', { class: 'eyebrow', html: eb(25, 'Latihan terbimbing', badge('extra', 'Latihan tambahan')) }),
+      E('h2', {}, 'Latihan terbimbing'),
+      E('p', { class: 'lead', html: 'Tiga soal dengan tahapan titik potong → batas → kurva pembatas → integral → hasil. Gunakan CHECK ANSWER, SHOW HINT, dan SHOW SOLUTION.' })));
+    const tabs = E('div', { style: 'margin-bottom:16px' }); r.append(tabs);
+    const box = E('div'); r.append(box);
+    const EX = [
+      host => {
+        const grid = E('div', { class: 'grid' }); host.append(grid);
+        const fig = E('div', { class: 'fig' }), P = E('div', { class: 'panel' }); grid.append(fig, P);
+        const f = x => x * x - 2 * x;
+        const g = new Graph(fig, { x: [-0.6, 3.4], y: [-1.4, 3.6], gx: .5, lx: 1 });
+        const r1 = g.areaX(() => 0, f, 0, 2, { cls: 'q' }), r2 = g.areaX(f, () => 0, 2, 3, { cls: 'q' });
+        g.curve(f, -0.6, 3.4, { cls: 'c1' }); g.vline(3, { cls: 'gd solid' });
+        g.text(3.05, 3.2, 'y = x² − 2x', { anchor: 'end', dx: -12, cls: 'c1 it' }); g.text(3, 3.4, 'x = 3', { dx: 6, cls: 'm' });
+        blk(P, `<p><b>Soal (a).</b> Tentukan luas daerah yang dibatasi oleh ${m`y=x^2-2x`}, sumbu x, garis ${m`x=0`}, dan garis ${m`x=3`}.</p>`);
+        chain([
+          next => numq(P, { tag: 'Titik potong', q: `Kurva memotong sumbu x di ${m`x=0`} dan ${m`x=\,?`}`, pre: m`x=`, ans: 2, ph: 'mis. 1', hint: `${m`x^2-2x=x(x-2)=0`}.`, sol: `${m`x(x-2)=0\Rightarrow x=0,\;x=2`}.`, onCorrect: () => { g.dot(0, 0); g.dot(2, 0); next(); } }),
+          next => mcq(P, {
+            tag: 'Batas & posisi', q: `Pada ${m`0\lt x\lt 2`}, kurva berada…`, cols: true,
+            opts: [{ t: 'Di bawah sumbu x', ok: true, fb: `Uji ${m`x=1`}: ${m`y=-1`}. Jadi daerah dibagi: ${m`[0,2]`} di bawah sumbu, ${m`[2,3]`} di atas sumbu.` }, { t: 'Di atas sumbu x', fb: `Uji ${m`x=1`}: ${m`1-2=-1\lt0`}.` }],
+            onCorrect: () => { r1.setAttribute('class', 'ar reg2'); r2.setAttribute('class', 'ar area'); next(); }
+          }),
+          next => mcq(P, {
+            tag: 'Integral', q: 'Integral mana yang benar untuk luasnya?',
+            opts: [
+              { t: m`\int_0^2(2x-x^2)\,dx+\int_2^3(x^2-2x)\,dx`, ok: true, fb: 'Bagian di bawah sumbu memakai −f(x) = 2x − x², bagian di atas memakai f(x).' },
+              { t: m`\int_0^3(x^2-2x)\,dx`, fb: `Integral ini bernilai ${m`0`}: bagian negatif dan positif saling menghapus. Luas bukan nol.` },
+              { t: m`\int_0^2(x^2-2x)\,dx+\int_2^3(x^2-2x)\,dx`, fb: 'Bagian pertama bernilai negatif. Untuk daerah di bawah sumbu, balik tandanya.' }],
+            onCorrect: () => next()
+          }),
+          next => numq(P, {
+            tag: 'Hasil', q: 'Berapa luas totalnya?', pre: m`L=`, ans: 8 / 3, exact: '\\tfrac83', exactTxt: '8/3', key: 'latA',
+            hint: [`${m`\int_0^2(2x-x^2)\,dx=4-\tfrac83=\tfrac43`}.`, `${m`\int_2^3(x^2-2x)\,dx=\big[\tfrac{x^3}{3}-x^2\big]_2^3=0-\big(-\tfrac43\big)=\tfrac43`}.`],
+            sol: dm`L=\tfrac43+\tfrac43=\tfrac83`, okFb: `${m`L=\tfrac43+\tfrac43=\tfrac83`}.`
+          })
+        ]);
+        typeset(host);
+      },
+      host => {
+        const grid = E('div', { class: 'grid' }); host.append(grid);
+        const fig = E('div', { class: 'fig' }), P = E('div', { class: 'panel' }); grid.append(fig, P);
+        const h = y => 2 * y - y * y;
+        const g = new Graph(fig, { x: [-0.6, 1.8], y: [-0.5, 2.6], gx: .25, lx: .5 });
+        const ar = g.areaY(h, () => 0, 0, 2, { cls: 'q' });
+        g.curveY(h, -0.35, 2.35, { cls: 'c1' }); g.text(1, 1, 'x = 2y − y²', { dx: 10, cls: 'c1 it' });
+        blk(P, `<p><b>Soal (b).</b> Tentukan luas daerah yang dibatasi oleh kurva ${m`x=2y-y^2`} dan sumbu y. Gunakan irisan horizontal (dy).</p>`);
+        chain([
+          next => numq(P, { tag: 'Titik potong', q: `Kurva memotong sumbu y (${m`x=0`}) di ${m`y=0`} dan ${m`y=\,?`}`, pre: m`y=`, ans: 2, ph: 'mis. 1', hint: `${m`2y-y^2=y(2-y)=0`}.`, sol: `${m`y(2-y)=0\Rightarrow y=0,\;y=2`}. Batas integral ${m`c=0`}, ${m`d=2`}.`, onCorrect: () => { g.dot(0, 0); g.dot(0, 2); g.text(0, 2, '(0, 2)', { dx: 8, dy: -6, cls: 'm' }); next(); } }),
+          next => mcq(P, {
+            tag: 'Kurva kiri & kanan', q: 'Untuk 0 < y < 2, tentukan batas kiri dan kanan.',
+            opts: [
+              { t: `${m`x_L=0`} (sumbu y), ${m`x_R=2y-y^2`}`, ok: true, fb: `Pada ${m`y=1`}: kurva di ${m`x=1`}, sumbu y di ${m`x=0`}. Kurva di kanan.` },
+              { t: `${m`x_L=2y-y^2`}, ${m`x_R=0`} (sumbu y)`, fb: `Uji ${m`y=1`}: ${m`2y-y^2=1\gt0`}, jadi kurva berada di kanan sumbu y.` }],
+            onCorrect: () => { ar.setAttribute('class', 'ar area'); g.rect(0, h(.6), .56, .64, { cls: 'hot' }); next(); }
+          }),
+          next => numq(P, {
+            tag: 'Integral & hasil', q: `Hitung ${m`A=\int_0^2\big(x_R-x_L\big)\,dy=\int_0^2\big(2y-y^2\big)\,dy`}.`, pre: m`A=`, ans: 4 / 3, exact: '\\tfrac43', exactTxt: '4/3', key: 'latB',
+            hint: `Antiturunan: ${m`y^2-\tfrac{y^3}{3}`}.`, sol: dm`\Big[y^2-\tfrac{y^3}{3}\Big]_0^2=4-\tfrac83=\tfrac43`, okFb: dm`\Big[y^2-\tfrac{y^3}{3}\Big]_0^2=4-\tfrac83=\tfrac43`
+          })
+        ]);
+        typeset(host);
+      },
+      host => {
+        const grid = E('div', { class: 'grid' }); host.append(grid);
+        const fig = E('div', { class: 'fig' }), P = E('div', { class: 'panel' }); grid.append(fig, P);
+        const fp = x => 3 - x * x, fl = x => 2 * x;
+        const g = new Graph(fig, { x: [-3.6, 2.2], y: [-7.2, 4], gx: 1, lx: 1, ly: 2 });
+        const pp = g.curve(fp, -3.6, 2.2, { cls: 'cn' }), pl = g.curve(fl, -3.6, 2.2, { cls: 'cn dash' });
+        const lp = g.text(0, 3, 'y = 3 − x²', { dx: 10, dy: -8, cls: 'cn it' }), ll = g.text(1.75, 3.5, 'y = 2x', { anchor: 'end', dx: -10, cls: 'cn it' });
+        blk(P, `<p><b>Soal (c).</b> Tentukan luas daerah yang dibatasi oleh ${m`y=3-x^2`} dan ${m`y=2x`}.</p>`);
+        chain([
+          next => numq(P, { tag: 'Titik potong', q: `Kedua kurva berpotongan di ${m`x=-3`} dan ${m`x=\,?`}`, pre: m`x=`, ans: 1, ph: 'mis. 2', hint: `${m`3-x^2=2x\Rightarrow x^2+2x-3=0\Rightarrow(x+3)(x-1)=0`}.`, sol: `${m`x=-3`} dan ${m`x=1`}; titik ${m`(-3,-6)`} dan ${m`(1,2)`}.`, onCorrect: () => { g.dot(-3, -6); g.dot(1, 2); g.text(-3, -6, '(−3, −6)', { dx: 10, dy: 4, cls: 'm' }); g.text(1, 2, '(1, 2)', { dx: 10, dy: 4, cls: 'm' }); next(); } }),
+          next => mcq(P, {
+            tag: 'Kurva atas & bawah', q: `Pada ${m`-3\lt x\lt 1`}, kurva mana yang di atas?`, cols: true,
+            opts: [{ t: m`y=3-x^2`, ok: true, fb: `Uji ${m`x=0`}: ${m`3-0=3`} dan ${m`2\cdot0=0`}.` }, { t: m`y=2x`, fb: `Uji ${m`x=0`}: garis bernilai 0, parabola bernilai 3.` }],
+            onCorrect: () => { pp.setAttribute('class', 'cv c1'); pl.setAttribute('class', 'cv c2'); lp.setAttribute('class', 'lb c1 it'); ll.setAttribute('class', 'lb c2 it'); g.areaX(fp, fl, -3, 1, { cls: 'area' }); next(); }
+          }),
+          next => numq(P, {
+            tag: 'Integral & hasil', q: `Hitung ${m`A=\int_{-3}^{1}\big[(3-x^2)-2x\big]\,dx`}.`, pre: m`A=`, ans: 32 / 3, exact: '\\tfrac{32}{3}', exactTxt: '32/3', key: 'latC',
+            hint: [`Antiturunan: ${m`3x-\tfrac{x^3}{3}-x^2`}.`, `Nilai di ${m`x=1`}: ${m`\tfrac53`}. Nilai di ${m`x=-3`}: ${m`-9`}.`],
+            sol: dm`\Big[3x-\tfrac{x^3}{3}-x^2\Big]_{-3}^{1}=\tfrac53-(-9)=\tfrac{32}{3}`, okFb: dm`\tfrac53-(-9)=\tfrac{32}{3}`
+          })
+        ]);
+        typeset(host);
+      }
+    ];
+    seg(tabs, ['Soal (a) · luas terhadap sumbu', 'Soal (b) · irisan dy', 'Soal (c) · dua kurva'], i => { box.replaceChildren(); EX[i](box); }, 0, 'Pilih soal');
+  }
+});
+
+/* ---------- 26 QUIZ & SUMMARY ---------- */
+def({
+  sec: 'Penutup', title: 'Quiz & rangkuman: dari kurva menjadi luas', build(r) {
+    r.append(E('div', { class: 's-head' },
+      E('div', { class: 'eyebrow', html: eb(26, 'Penutup') }),
+      E('h2', {}, 'Quiz & rangkuman: dari kurva menjadi luas'),
+      E('p', { class: 'lead', html: 'Sepuluh soal dengan umpan balik, lalu ringkasan formula dan hasil setiap contoh.' })));
+    const tabs = E('div', { style: 'margin-bottom:16px' }); r.append(tabs);
+    const box = E('div'); r.append(box);
+    const Q = [
+      { type: 'mc', q: 'Luas satu irisan vertikal di antara y = f(x) (atas) dan y = g(x) (bawah) adalah…', opts: [[m`\Delta A\approx\big[f(x)-g(x)\big]\Delta x`, 1, 'Benar, karena untuk irisan vertikal tinggi persegi panjang adalah f(x) − g(x) dan lebarnya Δx.'], [m`\Delta A\approx\big[f(x)+g(x)\big]\Delta x`, 0, 'Tinggi irisan adalah selisih y atas dan y bawah, bukan jumlahnya.'], [m`\Delta A\approx f(x)\,g(x)\,\Delta x`, 0, 'Luas persegi panjang = tinggi × lebar; tingginya f − g.'], [m`\Delta A\approx\big[f(y)-g(y)\big]\Delta x`, 0, 'Irisan vertikal memakai fungsi x dan lebar Δx.']] },
+      { type: 'mc', q: `Benar atau salah: jika ${m`f(x)\le0`} pada ${m`[a,b]`}, maka ${m`\int_a^b f(x)\,dx`} adalah luas daerahnya.`, cols: true, opts: [['Benar', 0, 'Integralnya bernilai negatif, sedangkan luas selalu positif.'], ['Salah', 1, `Benar, jawabannya salah. Luasnya ${m`-\int_a^b f(x)\,dx`} (materi hal. 3).`]] },
+      { type: 'num', q: `Absis titik potong ${m`y=x`} dan ${m`y=x^2`} selain ${m`x=0`}?`, pre: m`x=`, ans: 1, sol: `${m`x(x-1)=0\Rightarrow x=1`}.` },
+      { type: 'graph' },
+      { type: 'mc', q: `Pada daerah antara ${m`y=x-1`} dan ${m`y^2=2x+6`}, kurva kiri ${m`x_L`} adalah…`, opts: [[m`x=\tfrac12y^2-3`, 1, 'Benar. Parabola membuka ke kanan dan menjadi ujung kiri setiap irisan horizontal.'], [m`x=y+1`, 0, 'Itu garis, yaitu ujung kanan (x_R).'], [m`x=\sqrt{2y+6}`, 0, 'Persamaan parabola diselesaikan untuk x, bukan untuk y: x = ½y² − 3.']] },
+      { type: 'order' },
+      { type: 'mc', q: `Mengapa daerah yang dibatasi ${m`y=x^2`}, ${m`y=-x+2`}, dan sumbu x harus dibagi saat memakai dx?`, opts: [['Batas atas berubah di x = 1', 1, 'Benar. Untuk 0 ≤ x ≤ 1 batas atasnya y = x², untuk 1 ≤ x ≤ 2 batas atasnya y = −x + 2.'], ['Karena kurvanya parabola', 0, 'Contoh 1 juga memakai parabola tetapi tidak perlu dibagi.'], ['Karena ada titik potong di x = −2', 0, 'x = −2 bukan batas daerah ini. Alasannya adalah batas atas yang berganti.']] },
+      { type: 'num', q: `Hitung ${m`\int_0^1\big(x-x^2\big)\,dx`}.`, pre: m`=`, ans: 1 / 6, exact: '\\tfrac16', exactTxt: '1/6', sol: `${m`\tfrac12-\tfrac13=\tfrac16`}.` },
+      { type: 'mc', q: `Batas integrasi dy untuk daerah ${m`y=x-1`} dan ${m`y^2=2x+6`} adalah…`, opts: [['y = −2 sampai y = 4', 1, 'Benar. Nilai y dari titik potong (−1, −2) dan (5, 4).'], ['y = −1 sampai y = 5', 0, 'Itu nilai x dari titik potong. Dengan dy, batasnya nilai y.'], ['y = −3 sampai y = 5', 0, 'Periksa kembali titik potong: (y + 2)(y − 4) = 0.']] },
+      { type: 'mc', q: 'Benar atau salah: dx dan dy untuk daerah yang sama menghasilkan luas yang sama.', cols: true, opts: [['Benar', 1, 'Benar. Contoh Soal 2 memberi 5/6 dengan dx (1/3 + 1/2) dan 5/6 dengan dy.'], ['Salah', 0, 'Luas adalah sifat daerah, bukan arah irisan. Lihat 5/6 pada dx dan dy.']] }
+    ];
+    let score = 0, qi = 0, answered = new Array(Q.length).fill(null);
+    const renderQuiz = () => {
+      box.replaceChildren();
+      const wrap = E('div', { class: 'grid even' }); box.append(wrap);
+      const left = E('div', { class: 'panel' }), right = E('div', { class: 'panel' }); wrap.append(left, right);
+      if (qi >= Q.length) {
+        App.done('quiz');
+        left.append(H(`<div class="q-tag">Hasil quiz</div><div class="score">${score} / ${Q.length}</div><p class="muted">Skor dihitung dari jawaban benar pada percobaan pertama.</p>`));
+        left.append(E('div', { class: 'row' }, E('button', { class: 'btn primary', type: 'button', onclick: () => { score = 0; qi = 0; answered.fill(null); renderQuiz(); } }, 'ULANGI QUIZ'), E('button', { class: 'btn', type: 'button', onclick: () => tabSeg.set(1) }, 'LIHAT RANGKUMAN →')));
+        const list = E('div', { class: 'tablewrap' }, E('table', { class: 'sumtab' }, E('tr', {}, E('th', {}, 'Soal'), E('th', {}, 'Hasil')), answered.map((a, k) => E('tr', {}, E('td', {}, 'Soal ' + (k + 1)), E('td', { style: `color:var(--${a ? 'ok' : 'bad'})` }, a ? '✓ benar pertama kali' : '✗ perlu diulang')))));
+        right.append(list); return;
+      }
+      const q = Q[qi];
+      left.append(H(`<div class="row" style="justify-content:space-between"><span class="q-tag">Soal ${qi + 1} / ${Q.length}</span><span class="q-tag">Skor ${score}</span></div>`));
+      const dotsEl = E('div', { class: 'dots' }, Q.map((_, k) => E('i', { class: k < qi ? 'on' : null }))); left.append(dotsEl);
+      const nextBtn = E('button', { class: 'btn primary', type: 'button', hidden: true, onclick: () => { qi++; renderQuiz(); } }, qi === Q.length - 1 ? 'LIHAT SKOR →' : 'SOAL BERIKUTNYA →');
+      const done = first => { if (answered[qi] === null) { answered[qi] = !!first; if (first) score++; } nextBtn.hidden = false; };
+      if (q.type === 'mc') mcq(left, { q: q.q, cols: q.cols, opts: q.opts.map(([t, ok, fb]) => ({ t, ok: !!ok, fb })), onCorrect: f => done(f) });
+      else if (q.type === 'num') numq(left, { q: q.q, pre: q.pre, ans: q.ans, exact: q.exact, exactTxt: q.exactTxt, sol: q.sol, onCorrect: f => done(f) });
+      else if (q.type === 'graph') {
+        left.append(H(`<div class="q"><p class="q-text">Graph identification: klik kurva yang menjadi batas ATAS daerah antara ${m`y=x^2`} dan ${m`y=2x-x^2`} pada ${m`0\lt x\lt 1`}.</p><p class="small muted">Kurva berwarna netral. Klik langsung pada garis kurvanya.</p></div>`));
+        const fb = E('div', { class: 'fb', hidden: true }); left.append(fb);
+        const fig = E('div', { class: 'fig' }); right.append(fig);
+        const g = new Graph(fig, { x: [-0.4, 2.2], y: [-0.4, 1.5], gx: .25, lx: .5 });
+        g.areaX(x => 2 * x - x * x, f_x2, 0, 1, { cls: 'q' });
+        let tries = 0, ok = false;
+        const pick = w => { if (ok) return; tries++; if (w === 'T') { ok = true; setFb(fb, 'ok', `Kurva atas adalah ${m`y=2x-x^2`}: pada ${m`x=0{,}5`} nilainya 0,75, sedangkan ${m`x^2=0{,}25`}.`); pT.setAttribute('class', 'cv c1 thick'); pB.setAttribute('class', 'cv c2'); done(tries === 1); } else setFb(fb, 'bad', `Itu ${m`y=x^2`}. Pada ${m`x=0{,}5`} nilainya 0,25, lebih kecil dari kurva lain.`); };
+        const pB = g.curve(f_x2, -0.4, 2.2, { cls: 'cn', hit: () => pick('B') }), pT = g.curve(x => 2 * x - x * x, -0.4, 2.2, { cls: 'cn', hit: () => pick('T') });
+        g.text(-0.3, .3, 'P', { cls: 'big ui' }); g.text(1.6, .95, 'Q', { cls: 'big ui' });
+        left.append(E('p', { class: 'small muted' }, 'Kurva P dan Q ditandai pada grafik.'));
+      } else if (q.type === 'order') {
+        const correct = ['Cari titik potong', 'Pilih dx atau dy', 'Tentukan batas integrasi', 'Tentukan fungsi pembatas', 'Bentuk integral', 'Hitung integral'];
+        let items = [3, 0, 5, 1, 4, 2].map(k => correct[k]);
+        const qd = E('div', { class: 'q' }, E('p', { class: 'q-text' }, 'Drag & drop: susun langkah penyelesaian luas daerah dari yang pertama. Seret item, atau pakai tombol ↑ ↓.'));
+        const ol = E('ol', { class: 'order' }); qd.append(ol); left.append(qd);
+        const fb = E('div', { class: 'fb', hidden: true }); const chk = E('button', { class: 'btn primary sm', type: 'button' }, 'CHECK ANSWER');
+        qd.append(E('div', { class: 'q-tools' }, chk), fb);
+        let dragK = null, tries = 0, solved = false;
+        const draw = () => {
+          ol.replaceChildren(...items.map((t, k) => {
+            const li = E('li', { draggable: 'true' }, E('span', { class: 'no' }, k + 1), E('span', { class: 'grow' }, t),
+              E('button', { type: 'button', 'aria-label': 'Naik', disabled: k === 0 || solved, onclick: () => { [items[k - 1], items[k]] = [items[k], items[k - 1]]; draw(); } }, '↑'),
+              E('button', { type: 'button', 'aria-label': 'Turun', disabled: k === items.length - 1 || solved, onclick: () => { [items[k + 1], items[k]] = [items[k], items[k + 1]]; draw(); } }, '↓'));
+            li.addEventListener('dragstart', e => { dragK = k; li.classList.add('drag'); try { e.dataTransfer.setData('text/plain', String(k)); } catch (_) {} });
+            li.addEventListener('dragend', () => li.classList.remove('drag'));
+            li.addEventListener('dragover', e => { e.preventDefault(); li.classList.add('over'); });
+            li.addEventListener('dragleave', () => li.classList.remove('over'));
+            li.addEventListener('drop', e => { e.preventDefault(); if (dragK === null || solved) return; const [it] = items.splice(dragK, 1); items.splice(k, 0, it); dragK = null; draw(); });
+            return li;
+          }));
+        };
+        chk.addEventListener('click', () => {
+          if (solved) return; tries++;
+          const wrongAt = items.findIndex((t, k) => t !== correct[k]);
+          if (wrongAt < 0) { solved = true; chk.disabled = true; setFb(fb, 'ok', 'Urutan tepat. Titik potong memberi batas; arah irisan menentukan fungsi pembatas; baru kemudian integral dibentuk dan dihitung.'); draw(); done(tries === 1); }
+          else setFb(fb, 'bad', `Posisi ${wrongAt + 1} belum tepat. Ingat: batas integrasi berasal dari titik potong, dan fungsi pembatas bergantung pada arah irisan.`);
+        });
+        draw();
+      }
+      left.append(E('div', { class: 'row' }, nextBtn));
+      typeset(box);
+    };
+    const renderSum = () => {
+      box.replaceChildren();
+      const wrap = E('div', { class: 'grid even' }); box.append(wrap);
+      const left = E('div', { class: 'panel' }), right = E('div', { class: 'panel' }); wrap.append(left, right);
+      left.append(H(`<ol class="flow"><li class="on">Grafik</li><li class="on">Titik potong</li><li class="on">Batas</li><li class="on">Irisan</li><li class="on">Integral</li><li class="on">Luas</li></ol>`));
+      left.append(H(`<div class="plate big"><span class="lbl">Irisan vertikal</span>${dm`A=\int_a^b\big[f(x)-g(x)\big]\,dx`}<p class="small muted">${m`f`} kurva atas, ${m`g`} kurva bawah, ${m`a,b`} nilai x.</p></div>`));
+      left.append(H(`<div class="plate big"><span class="lbl">Irisan horizontal</span>${dm`A=\int_c^d\big[f(y)-g(y)\big]\,dy`}<p class="small muted">${m`f(y)=x_R`} kurva kanan, ${m`g(y)=x_L`} kurva kiri, ${m`c,d`} nilai y.</p></div>`));
+      left.append(H(`<div class="plate"><span class="lbl">Luas terhadap sumbu-x</span>${dm`L=\int_a^b|f(x)|\,dx`}</div>`));
+      right.append(H(`<div class="q-tag" style="margin-bottom:6px">Hasil contoh dalam modul</div><div class="tablewrap"><table class="sumtab">
+        <tr><th>Daerah</th><th>Irisan</th><th>Luas</th></tr>
+        <tr><td>${m`y=x^2-1`}, ${m`x=\pm2`}, sumbu-x</td><td>dx, 3 subregion</td><td>${m`4`}</td></tr>
+        <tr><td>${m`y=x`}, ${m`y=x^2`}</td><td>dx</td><td>${m`\tfrac16`}</td></tr>
+        <tr><td>${m`y=x^2`}, ${m`y=-x+2`}, sumbu x</td><td>dx (2 subregion) atau dy</td><td>${m`\tfrac56`}</td></tr>
+        <tr><td>${m`y=x-1`}, ${m`y^2=2x+6`}</td><td>dy</td><td>${m`18`}</td></tr>
+        <tr><td>${m`y=x^2`}, ${m`y=2x-x^2`}</td><td>dx</td><td>${m`\tfrac13`}</td></tr></table></div>`));
+      const tid = uid('refl');
+      const refl = E('div', { class: 'q' },
+        E('div', { class: 'q-tag' }, 'Refleksi'),
+        E('label', { class: 'q-text', for: tid }, 'Jika diberikan dua kurva, bagaimana Anda menentukan integral yang tepat untuk menghitung luas daerah di antaranya?'),
+        E('textarea', { id: tid, placeholder: 'Tulis jawaban Anda di sini. Catatan ini hanya tersimpan selama halaman terbuka.' }));
+      const ex = E('div', { class: 'hint', hidden: true, html: '<strong>Contoh jawaban.</strong> Gambar grafik dan arsir daerahnya. Cari titik potong kedua kurva. Periksa arah irisan: jika irisan vertikal selalu punya kurva atas dan bawah yang sama, pakai dx dengan batas nilai x; jika irisan horizontal selalu punya kurva kiri dan kanan yang sama, pakai dy dengan batas nilai y dan ubah persamaan ke bentuk x = f(y). Jika tidak ada yang tetap, bagi daerah menjadi subregion. Integralnya adalah (atas − bawah)dx atau (kanan − kiri)dy, dan hasilnya harus positif.' });
+      refl.append(E('div', { class: 'q-tools' }, E('button', { class: 'btn sm', type: 'button', onclick: () => ex.hidden = false }, 'LIHAT CONTOH JAWABAN')), ex);
+      right.append(refl);
+      typeset(box);
+    };
+    const tabSeg = seg(tabs, ['Quiz (10 soal)', 'Rangkuman'], i => i ? renderSum() : renderQuiz(), 0, 'Quiz atau rangkuman');
+  }
+});
+
+/* =========================================================
+   APP: navigation, menu, progress
+   ========================================================= */
+const App = {
+  i: 0, visited: new Set(), doneS: new Set(),
+  init() {
+    $('#btnPrev').addEventListener('click', () => this.prev());
+    $('#btnNext').addEventListener('click', () => this.next());
+    $('#btnReset').addEventListener('click', () => this.render());
+    $('#btnMenu').addEventListener('click', () => this.menu(true));
+    $('#btnMenuClose').addEventListener('click', () => this.menu(false));
+    $('#menu').addEventListener('click', e => { if (e.target.id === 'menu') this.menu(false); });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') { this.menu(false); return; }
+      const t = e.target; if (t && (t.matches('input,select,textarea') || t.isContentEditable)) return;
+      if (!$('#menu').hidden) return;
+      if (e.key === 'ArrowRight' || e.key === 'PageDown') { e.preventDefault(); this.next(); }
+      if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); this.prev(); }
+    });
+    let start = 0; const mm = (location.hash || '').match(/^#s(\d{1,2})$/); if (mm) start = clamp(+mm[1] - 1, 0, SL.length - 1);
+    this.go(start);
+  },
+  go(i) { this.i = clamp(i, 0, SL.length - 1); this.visited.add(this.i); this.menu(false); this.render(); },
+  next() { if (this.i < SL.length - 1) this.go(this.i + 1); },
+  prev() { if (this.i > 0) this.go(this.i - 1); },
+  render() {
+    const s = SL[this.i], main = $('#main');
+    main.replaceChildren();
+    const root = E('section', { class: 'slide', 'aria-label': s.title }); main.append(root);
+    try { s.build(root); } catch (e) { console.error(e); root.append(E('p', { class: 'fb bad' }, 'Slide ini gagal dimuat: ' + e.message)); }
+    typeset(root); main.scrollTop = 0;
+    const nn = String(this.i + 1).padStart(2, '0'), tot = String(SL.length).padStart(2, '0');
+    $('#cnt').textContent = `SLIDE ${nn} / ${tot}`; $('#cntSec').textContent = s.sec;
+    $('#prog').style.width = ((this.i + 1) / SL.length * 100) + '%';
+    $('#btnPrev').disabled = this.i === 0; $('#btnNext').disabled = this.i === SL.length - 1;
+    $('#hdrTitle').textContent = s.title;
+    try { history.replaceState(null, '', '#s' + nn); } catch (e) {}
+    this.renderMenu();
+  },
+  done() { this.doneS.add(this.i); this.renderMenu(); },
+  renderMenu() {
+    const body = $('#menuBody'); body.replaceChildren(); let sec = null, list = null;
+    SL.forEach((s, k) => {
+      if (s.sec !== sec) { sec = s.sec; body.append(E('div', { class: 'menu-sec' }, sec)); list = E('ul', { class: 'menu-list' }); body.append(list); }
+      const st = this.doneS.has(k) ? '✓' : this.visited.has(k) ? '•' : '';
+      list.append(E('li', {}, E('button', { type: 'button', class: k === this.i ? 'cur' : null, 'aria-current': k === this.i ? 'page' : null, onclick: () => this.go(k) },
+        E('span', { class: 'no' }, String(k + 1).padStart(2, '0')), E('span', {}, s.title), E('span', { class: 'st' + (this.doneS.has(k) ? '' : ' v') }, st))));
+    });
+  },
+  menu(open) { const m = $('#menu'); m.hidden = !open; if (open) { const c = m.querySelector('.cur'); c && c.focus(); } }
+};
+App.init();
+</script>
+</body>
+</html>
